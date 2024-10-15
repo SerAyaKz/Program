@@ -1,20 +1,19 @@
 package kz.com.SerAya.Entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
-import java.util.Set;
 
 @Data
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "courses")
-public class Course extends AbstractEntity {
+@Table(name = "capability")
+public class Capability extends AbstractEntity {
 
     @Column(name = "name", nullable = false)
     private String name;

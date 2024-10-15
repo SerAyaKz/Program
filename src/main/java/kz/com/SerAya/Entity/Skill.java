@@ -1,27 +1,20 @@
 package kz.com.SerAya.Entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
-
-import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 @Data
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "standard")
-public class Standard{
+@Table(name = "job_skill")
+public class Skill{
 
     @Id
     @GeneratedValue
@@ -30,7 +23,9 @@ public class Standard{
     @Column(name = "name", nullable = false)
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
-    private User user;
+    @Column(name = "freq", nullable = false)
+    private int freq;
+
+    @ManyToMany(mappedBy = "skills")
+    private Set<Job> jobs;
 }

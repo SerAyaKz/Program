@@ -9,6 +9,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.*;
 import lombok.AllArgsConstructor;
@@ -63,4 +64,15 @@ public class Program extends AbstractEntity {
     @ManyToOne
     @JoinColumn(name = "created_by", referencedColumnName = "id")
     private User createdBy;
+
+    @OneToMany(mappedBy = "program")
+    private Set<ProgramJob> educationProgramJobs;
+
+    @OneToMany
+    @JoinTable(
+            name = "program_standard",
+            joinColumns = @JoinColumn(name = "program_id"),
+            inverseJoinColumns = @JoinColumn(name = "standard_id")
+    )
+    private Set<Standard> standards;
 }

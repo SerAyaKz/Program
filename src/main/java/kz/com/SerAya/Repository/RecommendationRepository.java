@@ -1,5 +1,6 @@
 package kz.com.SerAya.Repository;
 
+import kz.com.SerAya.DTO.RecommendationDto;
 import kz.com.SerAya.Entity.Recommendation;
 import kz.com.SerAya.Entity.Standard;
 import org.springframework.data.jpa.repository.JpaRepository;

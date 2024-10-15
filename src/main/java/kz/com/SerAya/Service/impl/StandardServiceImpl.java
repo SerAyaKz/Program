@@ -6,8 +6,10 @@ import kz.com.SerAya.DTO.StandardDto;
 import kz.com.SerAya.Entity.Program;
 import kz.com.SerAya.Entity.Standard;
 import kz.com.SerAya.Entity.Standard;
+import kz.com.SerAya.Entity.User;
 import kz.com.SerAya.Repository.ProgramRepository;
 import kz.com.SerAya.Repository.StandardRepository;
+import kz.com.SerAya.Repository.UserRepository;
 import kz.com.SerAya.Service.StandardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,13 +21,13 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class StandardServiceImpl implements StandardService {
-    private final ProgramRepository programRepository;
+    private final UserRepository userRepository;
     private final StandardRepository repository;
 
     @Override
     public Integer save(StandardDto dto) {
-        Program program = programRepository.findById(dto.getProgram_id()).orElseThrow(EntityNotFoundException::new);
-        Standard standard = StandardDto.toEntity(dto,program);
+        User user = userRepository.findById(dto.getUser_id()).orElseThrow(EntityNotFoundException::new);
+        Standard standard = StandardDto.toEntity(dto,user);
 
         Standard savedStandard = repository.save(standard);
 

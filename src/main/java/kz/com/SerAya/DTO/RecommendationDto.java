@@ -13,13 +13,13 @@ import lombok.Setter;
 @Builder
 public class RecommendationDto {
     private Integer id;
-    private String recommendation;
+    private String content;
     private Integer program_id;
 
     public static RecommendationDto fromEntity(Recommendation recommendation) {
         return RecommendationDto.builder()
                 .id(recommendation.getId())
-                .recommendation(recommendation.getRecommendation())
+                .content(recommendation.getContent())
                 .program_id(recommendation.getProgram() != null ? recommendation.getProgram().getId() : null)
                 .build();
     }
@@ -27,7 +27,7 @@ public class RecommendationDto {
     public static Recommendation toEntity(RecommendationDto recommendationDto, Program program) {
         return Recommendation.builder()
                 .id(recommendationDto.getId())
-                .recommendation(recommendationDto.getRecommendation())
+                .content(recommendationDto.getContent())
                 .program(program)
                 .build();
     }

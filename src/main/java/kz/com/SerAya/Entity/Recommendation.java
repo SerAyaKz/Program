@@ -27,8 +27,8 @@ public class Recommendation{
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "recommendation", nullable = false)
-    private String recommendation;
+    @Column(name = "content", nullable = false)
+    private String content;
 
     @ManyToOne
     @JoinColumn(name = "program_id")

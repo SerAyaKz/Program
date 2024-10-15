@@ -44,7 +44,9 @@ public class SecurityConfig {
                                                 "/users/",
                                                 "/users/update",
                                                 "/standard",
-                                                "/standard/**"
+                                                "/standard/**",
+                                                "/recommendation",
+                                                "/recommendation/**"
 
 
 
