@@ -81,6 +81,7 @@ public class ProgramDto {
                                 .build()
                 )
                 .createdDate(LocalDateTime.now())
+                .modifiedDate(LocalDateTime.now())
                 .build();
     }
 }

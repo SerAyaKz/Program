@@ -31,6 +31,6 @@ public class Standard{
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
-    private User user;
+    @JoinColumn(name = "program_id", referencedColumnName = "id", nullable = false)
+    private Program program;
 }

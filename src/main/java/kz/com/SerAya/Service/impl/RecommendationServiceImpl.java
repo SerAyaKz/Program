@@ -52,5 +52,10 @@ public class RecommendationServiceImpl implements RecommendationService {
         repository.deleteById(id);
     }
 
-   
+    @Override
+    public void update(Integer id, RecommendationDto standardDto) {
+
+    }
+
+
 }

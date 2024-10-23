@@ -11,5 +11,5 @@ public interface AbstractService<T> {
     T findById(Integer id);
 
     void delete(Integer id);
-
+    void update(Integer id, T standardDto);
 }

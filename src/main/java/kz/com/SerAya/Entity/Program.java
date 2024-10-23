@@ -2,6 +2,7 @@ package kz.com.SerAya.Entity;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.CreatedDate;
 
 @Data
 @SuperBuilder
@@ -23,7 +25,11 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @Entity
 @Table(name = "programs")
-public class Program extends AbstractEntity {
+public class Program {
+
+    @Id
+    @GeneratedValue
+    private Integer id;
 
     @Column(name = "code", nullable = false)
     private String code;
@@ -61,6 +67,22 @@ public class Program extends AbstractEntity {
     @Column(name = "credits", nullable = false)
     private int credits;
 
+    @CreatedDate
+    @Column(
+            name = "createdDate",
+            nullable = false,
+            updatable = false
+    )
+    private LocalDateTime createdDate;
+
+    @CreatedDate
+    @Column(
+            name = "modifiedDate",
+            nullable = false,
+            updatable = false
+    )
+    private LocalDateTime modifiedDate;
+
     @ManyToOne
     @JoinColumn(name = "created_by", referencedColumnName = "id")
     private User createdBy;
@@ -74,5 +96,8 @@ public class Program extends AbstractEntity {
             joinColumns = @JoinColumn(name = "program_id"),
             inverseJoinColumns = @JoinColumn(name = "standard_id")
     )
+    @JsonIgnore
     private Set<Standard> standards;
+
+
 }

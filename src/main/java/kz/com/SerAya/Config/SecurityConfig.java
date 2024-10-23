@@ -46,7 +46,11 @@ public class SecurityConfig {
                                                 "/standard",
                                                 "/standard/**",
                                                 "/recommendation",
-                                                "/recommendation/**"
+                                                "/recommendation/**",
+                                                "/programs/section/**",
+                                                "/section/**",
+                                                "/section",
+                                                "/programs/standard/**"
 
 
 

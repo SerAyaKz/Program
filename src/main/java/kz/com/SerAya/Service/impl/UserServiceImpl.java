@@ -67,6 +67,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void update(Integer id, UserDto userDto) {
+
+    }
+
+    @Override
     @Transactional
     public Integer validateAccount(Integer id) {
         User user = repository.findById(id)

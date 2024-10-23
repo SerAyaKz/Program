@@ -14,7 +14,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "section")
-public class Section extends AbstractEntity {
+public class Section {
+    @Id
+    @GeneratedValue
+    private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "program_id", referencedColumnName = "id")
@@ -29,7 +32,7 @@ public class Section extends AbstractEntity {
     @Column(name = "section_content")
     private String sectionContent;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "parent_section_id", referencedColumnName = "id")
     private Section parentSection;
 
