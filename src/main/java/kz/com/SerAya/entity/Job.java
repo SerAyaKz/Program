@@ -1,5 +1,6 @@
 package kz.com.SerAya.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -14,19 +15,22 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "job")
-public class Job extends AbstractEntity {
-
+public class Job {
+    @Id
+    @GeneratedValue
+    private Integer id;
+    @JsonProperty("job_title")
     @Column(name = "name", nullable = false)
     private String name;
+    @JsonProperty("job_description")
+    @Column(name = "description", nullable = false)
+    private String description;
 
-    @OneToMany(mappedBy = "job")
-    private Set<ProgramJob> educationProgramJobs;
+    @ManyToOne
+    @JoinColumn(name = "program_id", referencedColumnName = "id", nullable = false)
+    private Program program;
 
-    @ManyToMany
-    @JoinTable(
-            name = "job_skills_mapping",
-            joinColumns = @JoinColumn(name = "job_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "skill_id", referencedColumnName = "id")
-    )
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "job_id", referencedColumnName = "id")
     private Set<Skill> skills;
 }

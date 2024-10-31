@@ -73,4 +73,8 @@ public class SectionServiceImpl implements SectionService {
     public List<Section> findSectionsByProgram(Integer id) {
         return repository.findSectionsByProgram(id);
     }
+
+    public String writePrompt(String sectionTitle, String program) {
+        return "Напиши "+ sectionTitle+" по направлению "+program+". Укажите ключевые аспекты программы, включая цели и задачи обучения, ожидаемые результаты, навыки и компетенции, которые получат студенты. Опишите, как программа готовит специалистов в области цифровых образовательных технологий, фокусируясь на применении современных технологий в образовательном процессе, инновационных методах обучения и педагогических подходах, а также на подготовке специалистов к работе в условиях цифровой трансформации образования.";
+    }
 }

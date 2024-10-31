@@ -50,7 +50,14 @@ public class SecurityConfig {
                                                 "/programs/section/**",
                                                 "/section/**",
                                                 "/section",
-                                                "/programs/standard/**"
+                                                "/programs/standard/**",
+                                                "/programs/job/**",
+                                                "/job/**",
+                                                "/job",
+                                                "/programs/skill/**",
+                                                "/skill/**",
+                                                "/skill",
+                                                "/generate_job_titles"
 
 
 

@@ -26,6 +26,7 @@ public class Skill{
     @Column(name = "freq", nullable = false)
     private int freq;
 
-    @ManyToMany(mappedBy = "skills")
-    private Set<Job> jobs;
+    @ManyToOne
+    @JoinColumn(name = "job_id", referencedColumnName = "id", nullable = false)
+    private Job job;
 }
