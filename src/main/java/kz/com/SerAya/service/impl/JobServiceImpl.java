@@ -1,6 +1,7 @@
 package kz.com.SerAya.service.impl;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kz.com.SerAya.dto.JobDto;
@@ -17,7 +18,9 @@ import org.springframework.web.client.RestTemplate;
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,7 +33,7 @@ public class JobServiceImpl implements JobService {
     @Override
     public Integer save(JobDto dto) {
         Program program = programRepository.findById(dto.getProgram_id()).orElseThrow(EntityNotFoundException::new);
-        Job job = JobDto.toEntity(dto,program,repository);
+        Job job = JobDto.toEntity(dto,program);
 
         Job savedJob = repository.save(job);
 
@@ -78,28 +81,74 @@ public class JobServiceImpl implements JobService {
 
     public void generate(Integer programId) {
         String flaskUrl = "http://localhost:5000/generate_job_titles";
+        Program program = programRepository.findById(programId).orElseThrow(EntityNotFoundException::new);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> requestEntity = new HttpEntity<>("{}", headers);  // Empty JSON object for the request
 
-        // Capture the response as Job[]
+        // Create a description JSON object
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("description", program.getName());
+
+        // Convert to JSON string
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonRequestBody;
+        try {
+            jsonRequestBody = objectMapper.writeValueAsString(requestBody);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return; // Handle JSON processing error
+        }
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(jsonRequestBody, headers);
+
+        // Capture the response as String
         ResponseEntity<String> response = restTemplate.exchange(flaskUrl, HttpMethod.POST, requestEntity, String.class);
 
         System.out.println(response.getBody());
-        ObjectMapper objectMapper = new ObjectMapper();
+
         try {
             List<Job> jobs = objectMapper.readValue(response.getBody(), new TypeReference<List<Job>>() {});
 
             // Save each job in the database
             for (Job job : jobs) {
-                job.setProgram(programRepository.findById(programId).orElseThrow(EntityNotFoundException::new));
+                job.setProgram(program);
                 repository.save(job); // Save the job entity
             }
         } catch (IOException e) {
             e.printStackTrace();
             // Handle error (e.g., log the error or rethrow it)
         }
+    }
+    public void collectSkills(Integer jobId) {
+        String flaskUrl = "http://localhost:5000/get_hh_enbek_skills";
+        Job job = repository.findById(jobId).orElseThrow(EntityNotFoundException::new);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // Create a description JSON object
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("job_name", job.getName());
+
+        // Convert to JSON string
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonRequestBody;
+        try {
+            jsonRequestBody = objectMapper.writeValueAsString(requestBody);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return; // Handle JSON processing error
+        }
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(jsonRequestBody, headers);
+
+        // Capture the response as String
+        ResponseEntity<String> response = restTemplate.exchange(flaskUrl, HttpMethod.POST, requestEntity, String.class);
+
+        System.out.println(response.getBody());
+        job.setJob_skill(response.getBody());
+        repository.save(job);
     }
 
 }

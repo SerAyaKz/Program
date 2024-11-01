@@ -30,11 +30,18 @@ public class JobController {
     ) {
         return ResponseEntity.ok(jobService.findJobsByProgram(id));
     }
-    @RequestMapping(value="/programs/job/{id}",method=RequestMethod.POST, headers = "Accept=application/json")
+    @RequestMapping(value="/programs/job/generate/{id}",method=RequestMethod.POST, headers = "Accept=application/json")
     public ResponseEntity<Void> generate(
             @PathVariable("id") Integer id
     ) {
         jobService.generate(id);
+        return ResponseEntity.accepted().build();
+    }
+    @RequestMapping(value="/programs/job/collect_skills/{id}",method=RequestMethod.POST, headers = "Accept=application/json")
+    public ResponseEntity<Void> collectSkills(
+            @PathVariable("id") Integer id
+    ) {
+        jobService.collectSkills(id);
         return ResponseEntity.accepted().build();
     }
     @RequestMapping(value = "/job/{id}", method = RequestMethod.DELETE, headers = "Accept=application/json")
