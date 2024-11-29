@@ -17,6 +17,7 @@ public class JobDto {
     private Integer id;
     private String name;
     private String description;
+
     private String job_skill;
     private Integer program_id;
 

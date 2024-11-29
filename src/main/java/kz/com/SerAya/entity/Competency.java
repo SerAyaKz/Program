@@ -1,19 +1,20 @@
 package kz.com.SerAya.entity;
 
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.*;
+import java.util.Set;
 
 @Data
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "capability")
-public class Capability  {
+@Table(name = "competency")
+public class Competency {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,10 +23,9 @@ public class Capability  {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "description")
+    @Column(name = "description", nullable = false, length = 500)
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "created_by", referencedColumnName = "id", nullable = false)
-    private User createdBy;
+    @OneToMany(mappedBy = "competency", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<TeachingResult> teachingResults;
 }

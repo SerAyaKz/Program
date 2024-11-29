@@ -1,27 +1,45 @@
 package kz.com.SerAya.entity;
 
+import javax.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.*;
+import java.util.Map;
 
 @Data
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "courses")
-public class Course extends AbstractEntity {
+@Table(name = "course")
+public class Course {
 
-    @Column(name = "name", nullable = false)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(name = "code")
+    private String code;
+
+    @Column(name = "name")
     private String name;
 
-    @Column(name = "description")
+    @Column(name = "description", length = 500)
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "created_by", referencedColumnName = "id", nullable = false)
-    private User createdBy;
+    @Column(name = "cycle")
+    private String cycle;
+
+    @Column(name = "type")
+    private String type;
+
+//    @Column(name = "number_of_credits")
+//    private int numberOfCredits;
+//
+//    @Column(name = "trimester")
+//    private int trimester;
+
+
 }
