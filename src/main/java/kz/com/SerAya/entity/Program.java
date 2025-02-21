@@ -25,26 +25,23 @@ public class Program {
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "code", nullable = false)
-    private String code;
+    @Column(name = "codeName", nullable = false)
+    private String codeName;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name = "academicDegree", nullable = false)
+    private String academicDegree;
 
-    @Column(name = "education_field_code", nullable = false)
-    private String educationFieldCode;
+    @Column(name = "eduGoalKz", nullable = false)
+    private String eduGoalKz;
 
-    @Column(name = "education_field_name", nullable = false)
-    private String educationFieldName;
+    @Column(name = "eduGoalRu", nullable = false)
+    private String eduGoalRu;
 
-    @Column(name = "training_direction_code", nullable = false)
-    private String trainingDirectionCode;
+    @Column(name = "eduGoalEn", nullable = false)
+    private String eduGoalEn;
 
-    @Column(name = "training_direction_name", nullable = false)
-    private String trainingDirectionName;
-
-    @Column(name = "program_group", nullable = false)
-    private String programGroup;
+    @Column(name = "direction_code_name", nullable = false)
+    private String directionCodeName;
 
     @Column(name = "isced_level", nullable = false)
     private int iscedLevel;
@@ -58,8 +55,8 @@ public class Program {
     @Column(name = "study_duration_years", nullable = false)
     private int studyDurationYears;
 
-    @Column(name = "credits", nullable = false)
-    private int credits;
+    @Column(name = "creditsCount", nullable = false)
+    private int creditsCount;
 
     @CreatedDate
     @Column(
@@ -77,21 +74,28 @@ public class Program {
     )
     private LocalDateTime modifiedDate;
 
-    @ManyToOne
-    @JoinColumn(name = "created_by", referencedColumnName = "id")
-    private User createdBy;
+    @ManyToMany
+    @JoinTable(
+            name = "program_job",
+            joinColumns = @JoinColumn(name = "program_id"),
+            inverseJoinColumns = @JoinColumn(name = "job_id")
+    )
+    private Set<Job> jobs;
 
-    @OneToMany(mappedBy = "program")
-    private Set<ProgramJob> educationProgramJobs;
-
-    @OneToMany
+    @ManyToMany
     @JoinTable(
             name = "program_standard",
             joinColumns = @JoinColumn(name = "program_id"),
             inverseJoinColumns = @JoinColumn(name = "standard_id")
     )
-    @JsonIgnore
     private Set<Standard> standards;
 
+    @ManyToMany
+    @JoinTable(
+            name = "program_user",
+            joinColumns = @JoinColumn(name = "program_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private Set<User> users;
 
 }

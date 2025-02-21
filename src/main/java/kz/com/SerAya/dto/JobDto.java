@@ -7,8 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-
-
 @Data
 @SuperBuilder
 @AllArgsConstructor
@@ -17,10 +15,8 @@ public class JobDto {
     private Integer id;
     private String name;
     private String description;
-
-    private String job_skill;
-    private Integer program_id;
-
+    private String jobType; // Updated field name to match entity
+    private Integer programId;
 
     public static JobDto fromEntity(Job job) {
         if (job == null) {
@@ -31,8 +27,8 @@ public class JobDto {
                 .id(job.getId())
                 .name(job.getName())
                 .description(job.getDescription())
-                .job_skill(job.getJob_skill())
-                .program_id(job.getProgram() != null ? job.getProgram().getId() : null)
+                .jobType(job.getJob_type()) // Ensure correct mapping
+                .programId(job.getProgram() != null ? job.getProgram().getId() : null)
                 .build();
     }
 
@@ -41,14 +37,12 @@ public class JobDto {
             return null;
         }
 
-        Job job = Job.builder()
-                .id(jobDto.getId() != null ? jobDto.getId() : null)
+        return Job.builder()
+                .id(jobDto.getId())
                 .name(jobDto.getName())
                 .description(jobDto.getDescription())
-                .job_skill(jobDto.getJob_skill())
+                .job_type(jobDto.getJobType()) // Corrected mapping
                 .program(program)
                 .build();
-
-        return job;
     }
 }

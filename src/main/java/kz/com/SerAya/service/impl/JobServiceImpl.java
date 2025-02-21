@@ -7,8 +7,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kz.com.SerAya.dto.JobDto;
 import kz.com.SerAya.entity.Program;
 import kz.com.SerAya.entity.Job;
+import kz.com.SerAya.entity.Skill;
 import kz.com.SerAya.repository.ProgramRepository;
 import kz.com.SerAya.repository.JobRepository;
+import kz.com.SerAya.repository.SkillRepository;
 import kz.com.SerAya.service.JobService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
@@ -28,11 +30,12 @@ import java.util.stream.Collectors;
 public class JobServiceImpl implements JobService {
     private final ProgramRepository programRepository;
     private final JobRepository repository;
+    private final SkillRepository skillRepository;
     private final RestTemplate restTemplate;
 
     @Override
     public Integer save(JobDto dto) {
-        Program program = programRepository.findById(dto.getProgram_id()).orElseThrow(EntityNotFoundException::new);
+        Program program = programRepository.findById(dto.getProgramId()).orElseThrow(EntityNotFoundException::new);
         Job job = JobDto.toEntity(dto,program);
 
         Job savedJob = repository.save(job);
@@ -88,7 +91,7 @@ public class JobServiceImpl implements JobService {
 
         // Create a description JSON object
         Map<String, String> requestBody = new HashMap<>();
-        requestBody.put("description", program.getName());
+        requestBody.put("description", program.getCodeName());
 
         // Convert to JSON string
         ObjectMapper objectMapper = new ObjectMapper();
@@ -123,7 +126,7 @@ public class JobServiceImpl implements JobService {
     public void collectSkills(Integer jobId) {
         String flaskUrl = "http://localhost:5000/get_hh_enbek_skills";
         Job job = repository.findById(jobId).orElseThrow(EntityNotFoundException::new);
-
+        Skill skill = skillRepository.findAllByJob_Id(jobId);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -147,7 +150,7 @@ public class JobServiceImpl implements JobService {
         ResponseEntity<String> response = restTemplate.exchange(flaskUrl, HttpMethod.POST, requestEntity, String.class);
 
         System.out.println(response.getBody());
-        job.setJob_skill(response.getBody());
+        skill.setName(response.getBody());
         repository.save(job);
     }
 

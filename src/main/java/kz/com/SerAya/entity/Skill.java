@@ -12,8 +12,8 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "capability")
-public class Capability  {
+@Table(name = "skill")
+public class Skill  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,10 +22,10 @@ public class Capability  {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "description")
-    private String description;
+    @Column(name = "freq")
+    private int freq;
 
     @ManyToOne
-    @JoinColumn(name = "created_by", referencedColumnName = "id", nullable = false)
-    private User createdBy;
+    @JoinColumn(name = "job_id", referencedColumnName = "id", nullable = false)
+    private Job job;
 }

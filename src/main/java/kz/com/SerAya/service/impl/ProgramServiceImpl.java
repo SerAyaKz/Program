@@ -70,19 +70,22 @@ public class ProgramServiceImpl implements ProgramService {
         Program existingProgram = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No standard found with the ID: " + id));
 
-        existingProgram.setCode(programDto.getCode());
-        existingProgram.setName(programDto.getName());
-        existingProgram.setEducationFieldCode(programDto.getEducationFieldCode());
-        existingProgram.setEducationFieldName(programDto.getEducationFieldName());
-        existingProgram.setTrainingDirectionCode(programDto.getTrainingDirectionCode());
-        existingProgram.setTrainingDirectionName(programDto.getTrainingDirectionName());
-        existingProgram.setProgramGroup(programDto.getProgramGroup());
+        existingProgram.setCodeName(programDto.getCodeName()); // Updated field name
+        existingProgram.setAcademicDegree(programDto.getAcademicDegree()); // Assuming it exists in DTO
+
+        existingProgram.setEduGoalKz(programDto.getEduGoalKz());
+        existingProgram.setEduGoalRu(programDto.getEduGoalRu());
+        existingProgram.setEduGoalEn(programDto.getEduGoalEn());
+
+        existingProgram.setDirectionCodeName(programDto.getDirectionCodeName()); // Matches `trainingDirectionCode`
         existingProgram.setIscedLevel(programDto.getIscedLevel());
         existingProgram.setNqfLevel(programDto.getNqfLevel());
         existingProgram.setSqfLevel(programDto.getSqfLevel());
         existingProgram.setStudyDurationYears(programDto.getStudyDurationYears());
-        existingProgram.setCredits(programDto.getCredits());
+        existingProgram.setCreditsCount(programDto.getCreditsCount()); // Updated `credits` → `creditsCount`
+
         existingProgram.setModifiedDate(LocalDateTime.now());
+
         repository.save(existingProgram);
     }
 

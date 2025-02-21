@@ -42,7 +42,7 @@ public class User implements UserDetails {
     @CreatedDate
     @Column(
             name = "createdDate",
-            nullable = false,
+            nullable = true,
             updatable = false
     )
     private LocalDateTime createdDate;

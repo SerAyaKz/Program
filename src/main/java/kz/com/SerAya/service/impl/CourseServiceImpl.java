@@ -53,11 +53,14 @@ public class CourseServiceImpl implements CourseService {
         Course existingCourse = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No course found with the ID: " + id));
 
-        existingCourse.setType(courseDto.getType());
-        existingCourse.setName(courseDto.getName());
-        existingCourse.setCycle(courseDto.getCycle());
-        existingCourse.setDescription(courseDto.getDescription());
         existingCourse.setCode(courseDto.getCode());
+        existingCourse.setNameKz(courseDto.getNameKz());
+        existingCourse.setNameRu(courseDto.getNameRu());
+        existingCourse.setNameEn(courseDto.getNameEn());
+        existingCourse.setBriefInfoKz(courseDto.getBriefInfoKz());
+        existingCourse.setBriefInfoRu(courseDto.getBriefInfoRu());
+        existingCourse.setBriefInfoEn(courseDto.getBriefInfoEn());
+        existingCourse.setSelective(courseDto.isSelective());
 
         repository.save(existingCourse);
     }

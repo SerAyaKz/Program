@@ -22,7 +22,7 @@ public class StandardServiceImpl implements StandardService {
 
     @Override
     public Integer save(StandardDto dto) {
-        Program program = programRepository.findById(dto.getProgram_id()).orElseThrow(EntityNotFoundException::new);
+        Program program = programRepository.findById(dto.getProgramId()).orElseThrow(EntityNotFoundException::new);
         Standard standard = StandardDto.toEntity(dto,program);
 
         Standard savedStandard = repository.save(standard);
@@ -64,7 +64,9 @@ public class StandardServiceImpl implements StandardService {
         Standard existingStandard = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No standard found with the ID: " + id));
 
-        existingStandard.setName(standardDto.getName());
+        existingStandard.setNameKz(standardDto.getNameKz());
+        existingStandard.setNameRu(standardDto.getNameRu());
+        existingStandard.setNameEn(standardDto.getNameEn());
 
         repository.save(existingStandard);
     }

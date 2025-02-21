@@ -6,8 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import kz.com.SerAya.entity.User;
-
 import java.time.LocalDateTime;
 
 @Getter
@@ -17,19 +15,19 @@ import java.time.LocalDateTime;
 public class ProgramDto {
 
     private Integer id;
-    private String code;
-    private String name;
-    private String educationFieldCode;
-    private String educationFieldName;
-    private String trainingDirectionCode;
-    private String trainingDirectionName;
-    private String programGroup;
+    private String codeName; // Updated field name
+    private String academicDegree; // Added missing field
+    private String eduGoalKz;
+    private String eduGoalRu;
+    private String eduGoalEn;
+    private String directionCodeName;
     private int iscedLevel;
     private int nqfLevel;
     private int sqfLevel;
     private int studyDurationYears;
-    private int credits;
-    private Integer createdById; // ID of the user who created the program
+    private int creditsCount; // Updated field name
+    private LocalDateTime createdDate;
+    private LocalDateTime modifiedDate;
 
     // Converts Program entity to ProgramDto
     public static ProgramDto fromEntity(Program program) {
@@ -38,43 +36,41 @@ public class ProgramDto {
         }
         return ProgramDto.builder()
                 .id(program.getId())
-                .code(program.getCode())
-                .name(program.getName())
-                .educationFieldCode(program.getEducationFieldCode())
-                .educationFieldName(program.getEducationFieldName())
-                .trainingDirectionCode(program.getTrainingDirectionCode())
-                .trainingDirectionName(program.getTrainingDirectionName())
-                .programGroup(program.getProgramGroup())
+                .codeName(program.getCodeName()) // Updated field name
+                .academicDegree(program.getAcademicDegree()) // Added missing field
+                .eduGoalKz(program.getEduGoalKz())
+                .eduGoalRu(program.getEduGoalRu())
+                .eduGoalEn(program.getEduGoalEn())
+                .directionCodeName(program.getDirectionCodeName()) // Matches entity
                 .iscedLevel(program.getIscedLevel())
                 .nqfLevel(program.getNqfLevel())
                 .sqfLevel(program.getSqfLevel())
                 .studyDurationYears(program.getStudyDurationYears())
-                .credits(program.getCredits())
-                .createdById(program.getCreatedBy() != null ? program.getCreatedBy().getId() : null)
+                .creditsCount(program.getCreditsCount()) // Updated field name
+                .createdDate(program.getCreatedDate())
+                .modifiedDate(program.getModifiedDate())
                 .build();
     }
 
     // Converts ProgramDto to Program entity
     public static Program toEntity(ProgramDto programDto) {
+        if (programDto == null) {
+            return null;
+        }
+
         return Program.builder()
-                .id(programDto.id)
-                .code(programDto.code)
-                .name(programDto.name)
-                .educationFieldCode(programDto.educationFieldCode)
-                .educationFieldName(programDto.educationFieldName)
-                .trainingDirectionCode(programDto.trainingDirectionCode)
-                .trainingDirectionName(programDto.trainingDirectionName)
-                .programGroup(programDto.programGroup)
-                .iscedLevel(programDto.iscedLevel)
-                .nqfLevel(programDto.nqfLevel)
-                .sqfLevel(programDto.sqfLevel)
-                .studyDurationYears(programDto.studyDurationYears)
-                .credits(programDto.credits)
-                .createdBy(
-                        User.builder()
-                                .id(programDto.createdById)
-                                .build()
-                )
+                .id(programDto.getId())
+                .codeName(programDto.getCodeName()) // Updated field name
+                .academicDegree(programDto.getAcademicDegree()) // Added missing field
+                .eduGoalKz(programDto.getEduGoalKz())
+                .eduGoalRu(programDto.getEduGoalRu())
+                .eduGoalEn(programDto.getEduGoalEn())
+                .directionCodeName(programDto.getDirectionCodeName()) // Matches entity
+                .iscedLevel(programDto.getIscedLevel())
+                .nqfLevel(programDto.getNqfLevel())
+                .sqfLevel(programDto.getSqfLevel())
+                .studyDurationYears(programDto.getStudyDurationYears())
+                .creditsCount(programDto.getCreditsCount()) // Updated field name
                 .createdDate(LocalDateTime.now())
                 .modifiedDate(LocalDateTime.now())
                 .build();

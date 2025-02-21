@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,6 +104,7 @@ public class UserServiceImpl implements UserService {
                 findOrCreateRole(ROLE_USER)
         );
         user.setActive(true);
+        user.setCreatedDate(LocalDateTime.now());
         var savedUser = repository.save(user);
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", savedUser.getId());

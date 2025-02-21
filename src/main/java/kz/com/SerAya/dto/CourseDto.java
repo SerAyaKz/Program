@@ -13,10 +13,13 @@ import lombok.experimental.SuperBuilder;
 public class CourseDto {
     private Integer id;
     private String code;
-    private String name;
-    private String description;
-    private String cycle;
-    private String type;
+    private String nameKz;
+    private String nameRu;
+    private String nameEn;
+    private String briefInfoKz;
+    private String briefInfoRu;
+    private String briefInfoEn;
+    private boolean isSelective;
 
     public static CourseDto fromEntity(Course course) {
         if (course == null) {
@@ -26,10 +29,13 @@ public class CourseDto {
         return CourseDto.builder()
                 .id(course.getId())
                 .code(course.getCode())
-                .name(course.getName())
-                .description(course.getDescription())
-                .cycle(course.getCycle())
-                .type(course.getType())
+                .nameKz(course.getNameKz())
+                .nameRu(course.getNameRu())
+                .nameEn(course.getNameEn())
+                .briefInfoKz(course.getBriefInfoKz())
+                .briefInfoRu(course.getBriefInfoRu())
+                .briefInfoEn(course.getBriefInfoEn())
+                .isSelective(course.isSelective())
                 .build();
     }
 
@@ -41,10 +47,13 @@ public class CourseDto {
         return Course.builder()
                 .id(courseDto.getId() != null ? courseDto.getId() : null)
                 .code(courseDto.getCode())
-                .name(courseDto.getName())
-                .description(courseDto.getDescription())
-                .cycle(courseDto.getCycle())
-                .type(courseDto.getType())
+                .nameKz(courseDto.getNameKz())
+                .nameRu(courseDto.getNameRu())
+                .nameEn(courseDto.getNameEn())
+                .briefInfoKz(courseDto.getBriefInfoKz())
+                .briefInfoRu(courseDto.getBriefInfoRu())
+                .briefInfoEn(courseDto.getBriefInfoEn())
+                .isSelective(courseDto.isSelective())
                 .build();
     }
 }

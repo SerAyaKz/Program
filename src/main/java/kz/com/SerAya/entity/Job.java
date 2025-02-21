@@ -28,8 +28,8 @@ public class Job {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(name = "job_skill")
-    private String job_skill;
+    @Column(name = "job_type")
+    private String job_type;
 
     @ManyToOne
     @JoinColumn(name = "program_id", referencedColumnName = "id", nullable = false)

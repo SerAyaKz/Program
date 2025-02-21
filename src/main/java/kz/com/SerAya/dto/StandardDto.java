@@ -14,8 +14,10 @@ import lombok.Setter;
 public class StandardDto {
 
     private Integer id;
-    private String name;
-    private Integer program_id;
+    private String nameKz;
+    private String nameRu;
+    private String nameEn;
+    private Integer programId;
 
     public static StandardDto fromEntity(Standard standard) {
         if (standard == null) {
@@ -24,8 +26,10 @@ public class StandardDto {
 
         return StandardDto.builder()
                 .id(standard.getId())
-                .name(standard.getName())
-                .program_id(standard.getProgram() != null ? standard.getProgram().getId() : null)
+                .nameKz(standard.getNameKz())
+                .nameRu(standard.getNameRu())
+                .nameEn(standard.getNameEn())
+                .programId(standard.getProgram() != null ? standard.getProgram().getId() : null)
                 .build();
     }
 
@@ -36,7 +40,9 @@ public class StandardDto {
 
         return Standard.builder()
                 .id(standardDto.getId())
-                .name(standardDto.getName())
+                .nameKz(standardDto.getNameKz())
+                .nameRu(standardDto.getNameRu())
+                .nameEn(standardDto.getNameEn())
                 .program(program)
                 .build();
     }

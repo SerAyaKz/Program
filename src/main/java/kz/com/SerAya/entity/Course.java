@@ -23,23 +23,26 @@ public class Course {
     @Column(name = "code")
     private String code;
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "nameKz")
+    private String nameKz;
 
-    @Column(name = "description", length = 500)
-    private String description;
+    @Column(name = "nameRu")
+    private String nameRu;
 
-    @Column(name = "cycle")
-    private String cycle;
+    @Column(name = "nameEn")
+    private String nameEn;
 
-    @Column(name = "type")
-    private String type;
+    @Column(name = "briefInfoKz", length = 500)
+    private String briefInfoKz;
 
-//    @Column(name = "number_of_credits")
-//    private int numberOfCredits;
-//
-//    @Column(name = "trimester")
-//    private int trimester;
+    @Column(name = "briefInfoRu", length = 500)
+    private String briefInfoRu;
+
+    @Column(name = "briefInfoEn", length = 500)
+    private String briefInfoEn;
+
+    @Column(name = "isSelective")
+    private boolean isSelective;
 
 
 }

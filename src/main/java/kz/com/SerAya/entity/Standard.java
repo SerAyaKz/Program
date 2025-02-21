@@ -19,8 +19,14 @@ public class Standard{
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name = "nameKz", nullable = false)
+    private String nameKz;
+
+    @Column(name = "nameRu", nullable = false)
+    private String nameRu;
+
+    @Column(name = "nameEn", nullable = false)
+    private String nameEn;
 
     @ManyToOne
     @JoinColumn(name = "program_id", referencedColumnName = "id", nullable = false)

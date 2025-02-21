@@ -1,8 +1,7 @@
 package kz.com.SerAya.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,7 +14,10 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Role extends AbstractEntity {
+public class Role {
+    @Id
+    @GeneratedValue
+    private Integer id;
 
     private String name;
 
