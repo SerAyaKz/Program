@@ -61,6 +61,7 @@ public class ProgramServiceImpl implements ProgramService {
     @Override
     public void delete(Integer id) {
         // todo check delete
+        sectionRepository.deleteAllByProgram(id);
         repository.deleteById(id);
     }
 

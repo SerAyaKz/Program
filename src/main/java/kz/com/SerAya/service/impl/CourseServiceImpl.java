@@ -3,14 +3,18 @@ package kz.com.SerAya.service.impl;
 import kz.com.SerAya.dto.CourseDto;
 import kz.com.SerAya.entity.Program;
 import kz.com.SerAya.entity.Course;
+import kz.com.SerAya.entity.User;
 import kz.com.SerAya.repository.ProgramRepository;
 import kz.com.SerAya.repository.CourseRepository;
+import kz.com.SerAya.repository.UserRepository;
 import kz.com.SerAya.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,10 +22,15 @@ import java.util.stream.Collectors;
 public class CourseServiceImpl implements CourseService {
 
     private final CourseRepository repository;
+    private final UserRepository userRepository;
 
     @Override
     public Integer save(CourseDto dto) {
-        Course course = CourseDto.toEntity(dto);
+        Set<User> users = dto.getUserIds() != null ?
+                (Set<User>) userRepository.findAllById(dto.getUserIds()) :
+                Collections.emptySet();
+
+        Course course = CourseDto.toEntity(dto, users);
         Course savedCourse = repository.save(course);
 
         return savedCourse.getId();
@@ -66,7 +75,12 @@ public class CourseServiceImpl implements CourseService {
     }
 
     public Course saveCourse(CourseDto dto) {
-        Course course = CourseDto.toEntity(dto);
+        Set<User> users = dto.getUserIds() != null ?
+                (Set<User>) userRepository.findAllById(dto.getUserIds()) :
+                Collections.emptySet();
+
+        Course course = CourseDto.toEntity(dto, users);
         return repository.save(course);
     }
+
 }

@@ -1,10 +1,14 @@
 package kz.com.SerAya.dto;
 
 import kz.com.SerAya.entity.Course;
+import kz.com.SerAya.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Data
 @SuperBuilder
@@ -20,6 +24,7 @@ public class CourseDto {
     private String briefInfoRu;
     private String briefInfoEn;
     private boolean isSelective;
+    private Set<Integer> userIds; // Storing only user IDs to avoid circular dependency
 
     public static CourseDto fromEntity(Course course) {
         if (course == null) {
@@ -36,16 +41,18 @@ public class CourseDto {
                 .briefInfoRu(course.getBriefInfoRu())
                 .briefInfoEn(course.getBriefInfoEn())
                 .isSelective(course.isSelective())
+                .userIds(course.getUsers() != null ?
+                        course.getUsers().stream().map(User::getId).collect(Collectors.toSet()) : null)
                 .build();
     }
 
-    public static Course toEntity(CourseDto courseDto) {
+    public static Course toEntity(CourseDto courseDto, Set<User> users) {
         if (courseDto == null) {
             return null;
         }
 
         return Course.builder()
-                .id(courseDto.getId() != null ? courseDto.getId() : null)
+                .id(courseDto.getId())
                 .code(courseDto.getCode())
                 .nameKz(courseDto.getNameKz())
                 .nameRu(courseDto.getNameRu())
@@ -54,6 +61,7 @@ public class CourseDto {
                 .briefInfoRu(courseDto.getBriefInfoRu())
                 .briefInfoEn(courseDto.getBriefInfoEn())
                 .isSelective(courseDto.isSelective())
+                .users(users) // Assigning users directly
                 .build();
     }
 }

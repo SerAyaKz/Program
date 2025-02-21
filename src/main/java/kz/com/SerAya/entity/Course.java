@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.util.Map;
+import java.util.Set;
 
 @Data
 @SuperBuilder
@@ -44,5 +45,7 @@ public class Course {
     @Column(name = "isSelective")
     private boolean isSelective;
 
+    @ManyToMany(mappedBy = "courses")
+    private Set<User> users;
 
 }

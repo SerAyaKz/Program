@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import javax.persistence.*;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
@@ -50,6 +51,22 @@ public class User implements UserDetails {
     @OneToOne
     @JsonIgnore
     private Role role;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_course",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "course_id")
+    )
+    private Set<Course> courses;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_program",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "program_id")
+    )
+    private Set<Program> programs;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
