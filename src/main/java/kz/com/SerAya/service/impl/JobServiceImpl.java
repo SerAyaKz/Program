@@ -7,7 +7,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kz.com.SerAya.dto.JobDto;
 import kz.com.SerAya.entity.Program;
 import kz.com.SerAya.entity.Job;
+import kz.com.SerAya.entity.ProgramJob;
 import kz.com.SerAya.entity.Skill;
+import kz.com.SerAya.repository.ProgramJobRepository;
 import kz.com.SerAya.repository.ProgramRepository;
 import kz.com.SerAya.repository.JobRepository;
 import kz.com.SerAya.repository.SkillRepository;
@@ -19,10 +21,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,15 +31,12 @@ public class JobServiceImpl implements JobService {
     private final JobRepository repository;
     private final SkillRepository skillRepository;
     private final RestTemplate restTemplate;
-
+    private final ProgramJobRepository programJobRepository;
     @Override
     public Integer save(JobDto dto) {
-        Program program = programRepository.findById(dto.getProgramId()).orElseThrow(EntityNotFoundException::new);
-        Job job = JobDto.toEntity(dto,program);
-
+        Job job = JobDto.toEntity(dto);
         Job savedJob = repository.save(job);
-
-
+        programJobRepository.addJobToProgram(dto.getProgramId(), job.getId());
         return savedJob.getId();
     }
 
@@ -48,27 +44,29 @@ public class JobServiceImpl implements JobService {
     public List<JobDto> findAll() {
         return repository.findAll()
                 .stream()
-                .map(JobDto::fromEntity)
+                .map(job -> JobDto.fromEntity(job, 0))
                 .collect(Collectors.toList());
     }
 
     @Override
     public JobDto findById(Integer id) {
         return repository.findById(id)
-                .map(JobDto::fromEntity)
+                .map(job -> JobDto.fromEntity(job, 0))
                 .orElseThrow(() -> new EntityNotFoundException("No program found with the ID : " + id));
     }
 
     @Override
     public void delete(Integer id) {
         // todo check delete
+        programJobRepository.removeJobFromProgram(id);
         repository.deleteById(id);
+
     }
 
     @Override
     public List<JobDto> findJobsByProgram(Integer id) {
         return repository.findJobsByProgram(id).stream()
-                .map(JobDto::fromEntity)
+                .map(job -> JobDto.fromEntity(job, id))
                 .collect(Collectors.toList());
     }
     @Override
@@ -115,8 +113,8 @@ public class JobServiceImpl implements JobService {
 
             // Save each job in the database
             for (Job job : jobs) {
-                job.setProgram(program);
-                repository.save(job); // Save the job entity
+//                job.setProgram(program);
+//                repository.save(job); // Save the job entity
             }
         } catch (IOException e) {
             e.printStackTrace();

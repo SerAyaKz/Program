@@ -31,8 +31,4 @@ public class Job {
     @Column(name = "job_type")
     private String job_type;
 
-    @ManyToOne
-    @JoinColumn(name = "program_id", referencedColumnName = "id", nullable = false)
-    private Program program;
-
 }

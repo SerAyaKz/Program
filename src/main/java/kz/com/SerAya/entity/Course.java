@@ -45,6 +45,9 @@ public class Course {
     @Column(name = "isSelective")
     private boolean isSelective;
 
+    @Column(name = "prerequisites")
+    private String prerequisites;
+
     @ManyToMany(mappedBy = "courses")
     private Set<User> users;
 

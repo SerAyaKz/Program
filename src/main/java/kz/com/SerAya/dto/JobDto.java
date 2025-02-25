@@ -15,10 +15,10 @@ public class JobDto {
     private Integer id;
     private String name;
     private String description;
-    private String jobType; // Updated field name to match entity
+    private String job_type;
     private Integer programId;
 
-    public static JobDto fromEntity(Job job) {
+    public static JobDto fromEntity(Job job, Integer programId) {
         if (job == null) {
             return null;
         }
@@ -27,12 +27,12 @@ public class JobDto {
                 .id(job.getId())
                 .name(job.getName())
                 .description(job.getDescription())
-                .jobType(job.getJob_type()) // Ensure correct mapping
-                .programId(job.getProgram() != null ? job.getProgram().getId() : null)
+                .job_type(job.getJob_type()) // Ensure correct mapping
+                .programId(programId)
                 .build();
     }
 
-    public static Job toEntity(JobDto jobDto, Program program) {
+    public static Job toEntity(JobDto jobDto) {
         if (jobDto == null) {
             return null;
         }
@@ -41,8 +41,7 @@ public class JobDto {
                 .id(jobDto.getId())
                 .name(jobDto.getName())
                 .description(jobDto.getDescription())
-                .job_type(jobDto.getJobType()) // Corrected mapping
-                .program(program)
+                .job_type(jobDto.getJob_type()) // Corrected mapping
                 .build();
     }
 }
