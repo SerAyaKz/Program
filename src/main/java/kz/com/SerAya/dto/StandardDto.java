@@ -19,7 +19,7 @@ public class StandardDto {
     private String nameEn;
     private Integer programId;
 
-    public static StandardDto fromEntity(Standard standard) {
+    public static StandardDto fromEntity(Standard standard, Integer programId) {
         if (standard == null) {
             return null;
         }
@@ -29,11 +29,11 @@ public class StandardDto {
                 .nameKz(standard.getNameKz())
                 .nameRu(standard.getNameRu())
                 .nameEn(standard.getNameEn())
-                .programId(standard.getProgram() != null ? standard.getProgram().getId() : null)
+                .programId(programId)
                 .build();
     }
 
-    public static Standard toEntity(StandardDto standardDto, Program program) {
+    public static Standard toEntity(StandardDto standardDto) {
         if (standardDto == null) {
             return null;
         }
@@ -43,7 +43,6 @@ public class StandardDto {
                 .nameKz(standardDto.getNameKz())
                 .nameRu(standardDto.getNameRu())
                 .nameEn(standardDto.getNameEn())
-                .program(program)
                 .build();
     }
 }

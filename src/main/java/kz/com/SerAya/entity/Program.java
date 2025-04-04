@@ -42,8 +42,8 @@ public class Program {
     @Column(name = "direction_code_name", nullable = false)
     private String directionCodeName;
 
-    @Column(name = "isced_level", nullable = false)
-    private int iscedLevel;
+    @Column(name = "isced_level", nullable = true)
+    private Integer iscedLevel;
 
     @Column(name = "nqf_level", nullable = false)
     private int nqfLevel;

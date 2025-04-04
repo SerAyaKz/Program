@@ -4,9 +4,12 @@ import kz.com.SerAya.dto.ProgramDto;
 import kz.com.SerAya.dto.SectionDto;
 import kz.com.SerAya.entity.Program;
 import kz.com.SerAya.entity.Section;
+import kz.com.SerAya.repository.CourseProgramRepository;
+import kz.com.SerAya.repository.LearningOutcomeRepository;
 import kz.com.SerAya.repository.ProgramRepository;
 import kz.com.SerAya.repository.SectionRepository;
 import kz.com.SerAya.service.ProgramService;
+import kz.com.SerAya.service.SectionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +26,8 @@ public class ProgramServiceImpl implements ProgramService {
 
     private final ProgramRepository repository;
     private final SectionRepository sectionRepository;
+    private final LearningOutcomeRepository learningOutcomeRepository;
+    private final CourseProgramRepository courseProgramRepository;
 
     @Override
     public Integer save(ProgramDto dto) {
@@ -61,7 +66,9 @@ public class ProgramServiceImpl implements ProgramService {
     @Override
     public void delete(Integer id) {
         // todo check delete
+        learningOutcomeRepository.deleteByProgram(id);
         sectionRepository.deleteAllByProgram(id);
+        courseProgramRepository.deleteByProgram(id);
         repository.deleteById(id);
     }
 

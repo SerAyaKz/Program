@@ -61,7 +61,13 @@ public class SecurityConfig {
                                                 "/programs/job/collect_skills/**",
                                                 "/programs/job/generate/**",
                                                 "/course/**",
-                                                "/course"
+                                                "/course",
+                                                "/programs/learningOutcome/**",
+                                                "/learningOutcome/**",
+                                                "/learningOutcome",
+                                                "/courseProgram/**",
+                                                "/courseProgram",
+                                                "/programs/courseProgram/**"
 
 
 

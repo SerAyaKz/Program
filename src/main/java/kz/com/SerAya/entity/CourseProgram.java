@@ -1,11 +1,11 @@
 package kz.com.SerAya.entity;
 
+import javax.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 import lombok.experimental.SuperBuilder;
-
-import javax.persistence.*;
+import java.util.Set;
 
 @Data
 @SuperBuilder
@@ -13,19 +13,19 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "course_program")
-public class CourseProgram{
+public class CourseProgram {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "year")
+    @Column(name = "year", nullable = false)
     private Integer year;
 
-    @Column(name = "term")
+    @Column(name = "term", nullable = false)
     private Integer term;
 
-    @Column(name = "creditCount")
+    @Column(name = "credit_count", nullable = false)
     private Integer creditCount;
 
     @ManyToOne
@@ -35,9 +35,5 @@ public class CourseProgram{
     @ManyToOne
     @JoinColumn(name = "course_id", referencedColumnName = "id", nullable = false)
     private Course course;
-
-    @ManyToOne
-    @JoinColumn(name = "learningOutcome", referencedColumnName = "id", nullable = false)
-    private LearningOutcome learningOutcome;
 
 }

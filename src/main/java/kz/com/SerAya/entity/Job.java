@@ -17,7 +17,7 @@ import java.util.Set;
 @Table(name = "job")
 public class Job {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @JsonProperty("job_title")

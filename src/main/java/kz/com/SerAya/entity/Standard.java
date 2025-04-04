@@ -28,7 +28,4 @@ public class Standard{
     @Column(name = "nameEn", nullable = false)
     private String nameEn;
 
-    @ManyToOne
-    @JoinColumn(name = "program_id", referencedColumnName = "id", nullable = false)
-    private Program program;
 }

@@ -17,6 +17,8 @@ public class ProgramController {
 
     @RequestMapping(value="/program",method= RequestMethod.GET, headers = "Accept=application/json")
     public ResponseEntity<List<Program>> findAll() {
+
+
         return ResponseEntity.ok(programService.findAllPrograms());
     }
 
