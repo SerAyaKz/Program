@@ -33,11 +33,11 @@ public class CourseController {
         return ResponseEntity.accepted().build();
     }
     @RequestMapping(value="/course",method=RequestMethod.POST, headers = "Accept=application/json")
-    public ResponseEntity<Course> save(
+    public ResponseEntity<Integer> save(
             @RequestBody CourseDto courseDto
     ) {
 
-        return ResponseEntity.ok(courseService.saveCourse(courseDto));
+        return ResponseEntity.ok(courseService.save(courseDto));
     }
     @PutMapping(value="/course/{id}", headers = "Accept=application/json")
     public ResponseEntity<Void> update(

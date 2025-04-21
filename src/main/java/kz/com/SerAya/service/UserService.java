@@ -1,21 +1,13 @@
 package kz.com.SerAya.service;
 
-import kz.com.SerAya.dto.AuthenticationRequest;
-import kz.com.SerAya.dto.AuthenticationResponse;
-import kz.com.SerAya.dto.LightUserDto;
 import kz.com.SerAya.dto.UserDto;
+import kz.com.SerAya.entity.User;
+
+import java.util.Optional;
 
 public interface UserService extends AbstractService<UserDto> {
 
-    Integer validateAccount(Integer id);
-
-    Integer invalidateAccount(Integer id);
-
-    AuthenticationResponse register(UserDto user);
-
-    AuthenticationResponse authenticate(AuthenticationRequest request);
-
-    Integer update(LightUserDto userDto);
-
-    Integer updateUser(UserDto userDto);
+    User createOrUpdateUser(UserDto userDto);
+    Optional<User> findByEmail(String email);
+    Optional<User> findByUid(String uid);
 }

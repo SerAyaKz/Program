@@ -41,12 +41,10 @@ public class CourseDto {
                 .briefInfoRu(course.getBriefInfoRu())
                 .briefInfoEn(course.getBriefInfoEn())
                 .isSelective(course.isSelective())
-                .userIds(course.getUsers() != null ?
-                        course.getUsers().stream().map(User::getId).collect(Collectors.toSet()) : null)
                 .build();
     }
 
-    public static Course toEntity(CourseDto courseDto, Set<User> users) {
+    public static Course toEntity(CourseDto courseDto) {
         if (courseDto == null) {
             return null;
         }
@@ -61,7 +59,6 @@ public class CourseDto {
                 .briefInfoRu(courseDto.getBriefInfoRu())
                 .briefInfoEn(courseDto.getBriefInfoEn())
                 .isSelective(courseDto.isSelective())
-                .users(users) // Assigning users directly
                 .build();
     }
 }

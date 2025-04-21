@@ -24,8 +24,7 @@ import org.springframework.web.filter.CorsFilter;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final UserDetailsService userDetailsService;
-    private final JwtAuthenticationFilter jwtAuthFilter;
+
 
 
     @Bean
@@ -67,7 +66,10 @@ public class SecurityConfig {
                                                 "/learningOutcome",
                                                 "/courseProgram/**",
                                                 "/courseProgram",
-                                                "/programs/courseProgram/**"
+                                                "/programs/courseProgram/**",
+                                                "/api/auth/register",
+                                                "api/auth/user/**",
+                                                "/course/user/**"
 
 
 
@@ -83,8 +85,8 @@ public class SecurityConfig {
                             }
                         }
                 )
-                .authenticationProvider(authenticationProvider())
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+//                .authenticationProvider(authenticationProvider())
+//                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .cors()
         ;
 
@@ -107,13 +109,6 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userDetailsService);
-        authenticationProvider.setPasswordEncoder(passwordEncoder());
-        return authenticationProvider;
-    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

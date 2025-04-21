@@ -48,7 +48,6 @@ public class Course {
     @Column(name = "prerequisites")
     private String prerequisites;
 
-    @ManyToMany(mappedBy = "courses")
-    private Set<User> users;
+
 
 }

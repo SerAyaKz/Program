@@ -26,11 +26,8 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Integer save(CourseDto dto) {
-        Set<User> users = dto.getUserIds() != null ?
-                (Set<User>) userRepository.findAllById(dto.getUserIds()) :
-                Collections.emptySet();
 
-        Course course = CourseDto.toEntity(dto, users);
+        Course course = CourseDto.toEntity(dto);
         Course savedCourse = repository.save(course);
 
         return savedCourse.getId();
@@ -72,15 +69,6 @@ public class CourseServiceImpl implements CourseService {
         existingCourse.setSelective(courseDto.isSelective());
 
         repository.save(existingCourse);
-    }
-
-    public Course saveCourse(CourseDto dto) {
-        Set<User> users = dto.getUserIds() != null ?
-                (Set<User>) userRepository.findAllById(dto.getUserIds()) :
-                Collections.emptySet();
-
-        Course course = CourseDto.toEntity(dto, users);
-        return repository.save(course);
     }
 
 }

@@ -14,18 +14,12 @@ import javax.validation.constraints.*;
 @Builder
 public class UserDto {
 
-
     private Integer id;
 
     @NotNull(message = "Le prenom ne doit pas etre vide")
     @NotEmpty(message = "Le prenom ne doit pas etre vide")
     @NotBlank(message = "Le prenom ne doit pas etre vide")
-    private String firstname;
-
-    @NotNull(message = "Le nom ne doit pas etre vide")
-    @NotEmpty(message = "Le nom ne doit pas etre vide")
-    @NotBlank(message = "Le nom ne doit pas etre vide")
-    private String lastname;
+    private String displayName;
 
     @NotNull(message = "L'email ne doit pas etre vide")
     @NotEmpty(message = "L'email ne doit pas etre vide")
@@ -36,20 +30,21 @@ public class UserDto {
     @NotNull(message = "Le mot de passe ne doit pas etre vide")
     @NotEmpty(message = "Le mot de passe ne doit pas etre vide")
     @NotBlank(message = "Le mot de passe ne doit pas etre vide")
-    @Size(min = 8, max = 16, message = "Le mot de passe doit etre entre 8 et 16 caracteres")
-    private String password;
-
-
-    private boolean active;
+    private String photoUrl;
+    private String title;
+    private Integer roleId;
+    private String uid;
 
     public static UserDto fromEntity(User user) {
         // null check
         return UserDto.builder()
                 .id(user.getId())
-                .firstname(user.getFirstname())
-                .lastname(user.getLastname())
+                .displayName(user.getDisplayName())
                 .email(user.getEmail())
-                .active(user.isActive())
+                .photoUrl(user.getPhotoUrl())
+                .title(user.getTitle())
+                .roleId(user.getRoleId())
+                .uid(user.getUid())
                 .build();
     }
 
@@ -57,10 +52,12 @@ public class UserDto {
         // null check
         return User.builder()
                 .id(user.getId())
-                .firstname(user.getFirstname())
-                .lastname(user.getLastname())
+                .displayName(user.getDisplayName())
                 .email(user.getEmail())
-                .password(user.getPassword())
+                .photoUrl(user.getPhotoUrl())
+                .title(user.getTitle())
+                .roleId(user.getRoleId())
+                .uid(user.getUid())
                 .build();
     }
 

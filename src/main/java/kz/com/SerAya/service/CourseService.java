@@ -8,5 +8,4 @@ import kz.com.SerAya.entity.Section;
 import java.util.List;
 
 public interface CourseService extends AbstractService<CourseDto> {
-    Course saveCourse(CourseDto dto);
 }
