@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface ProgramRepository extends JpaRepository<Program, Integer> {
     @Query(
-            value = "SELECT program.* \n" +
-                    "FROM program inner join program_user " +
-                    "on program.id=program_user.program_id\n" +
+            value = "SELECT programs.* \n" +
+                    "FROM programs inner join program_user " +
+                    "on programs.id=program_user.program_id\n" +
                     "WHERE program_user.user_id = ?1",
             nativeQuery = true)
     List<Program> findAllByUser(int id);

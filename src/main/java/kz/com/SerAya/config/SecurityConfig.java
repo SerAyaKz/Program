@@ -69,7 +69,8 @@ public class SecurityConfig {
                                                 "/programs/courseProgram/**",
                                                 "/api/auth/register",
                                                 "api/auth/user/**",
-                                                "/course/user/**"
+                                                "/course/user/**",
+                                                "/program/user/**"
 
 
 
