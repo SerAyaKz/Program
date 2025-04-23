@@ -21,7 +21,7 @@ import org.springframework.data.annotation.CreatedDate;
 public class Program {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "codeName", nullable = false)
@@ -73,28 +73,6 @@ public class Program {
     )
     private LocalDateTime modifiedDate;
 
-    @ManyToMany
-    @JoinTable(
-            name = "program_job",
-            joinColumns = @JoinColumn(name = "program_id"),
-            inverseJoinColumns = @JoinColumn(name = "job_id")
-    )
-    private Set<Job> jobs;
 
-    @ManyToMany
-    @JoinTable(
-            name = "program_standard",
-            joinColumns = @JoinColumn(name = "program_id"),
-            inverseJoinColumns = @JoinColumn(name = "standard_id")
-    )
-    private Set<Standard> standards;
-
-    @ManyToMany
-    @JoinTable(
-            name = "program_user",
-            joinColumns = @JoinColumn(name = "program_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private Set<User> users;
 
 }

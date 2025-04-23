@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -51,5 +52,9 @@ public class ProgramController {
     ) {
         programService.update(id, programDto);
         return ResponseEntity.ok().build();
+    }
+    @RequestMapping(value="/dashboard", method=RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseEntity<Map<String, Object>> getDashboardData() {
+        return ResponseEntity.ok(programService.getDashboardData());
     }
 }

@@ -29,19 +29,18 @@ public class ProgramDto {
     private LocalDateTime createdDate;
     private LocalDateTime modifiedDate;
 
-    // Converts Program entity to ProgramDto
     public static ProgramDto fromEntity(Program program) {
         if (program == null) {
             return null;
         }
         return ProgramDto.builder()
                 .id(program.getId())
-                .codeName(program.getCodeName()) // Updated field name
-                .academicDegree(program.getAcademicDegree()) // Added missing field
+                .codeName(program.getCodeName())
+                .academicDegree(program.getAcademicDegree())
                 .eduGoalKz(program.getEduGoalKz())
                 .eduGoalRu(program.getEduGoalRu())
                 .eduGoalEn(program.getEduGoalEn())
-                .directionCodeName(program.getDirectionCodeName()) // Matches entity
+                .directionCodeName(program.getDirectionCodeName())
                 .iscedLevel(program.getIscedLevel())
                 .nqfLevel(program.getNqfLevel())
                 .sqfLevel(program.getSqfLevel())
@@ -52,7 +51,6 @@ public class ProgramDto {
                 .build();
     }
 
-    // Converts ProgramDto to Program entity
     public static Program toEntity(ProgramDto programDto) {
         if (programDto == null) {
             return null;
@@ -60,17 +58,17 @@ public class ProgramDto {
 
         return Program.builder()
                 .id(programDto.getId())
-                .codeName(programDto.getCodeName()) // Updated field name
-                .academicDegree(programDto.getAcademicDegree()) // Added missing field
+                .codeName(programDto.getCodeName())
+                .academicDegree(programDto.getAcademicDegree())
                 .eduGoalKz(programDto.getEduGoalKz())
                 .eduGoalRu(programDto.getEduGoalRu())
                 .eduGoalEn(programDto.getEduGoalEn())
-                .directionCodeName(programDto.getDirectionCodeName()) // Matches entity
+                .directionCodeName(programDto.getDirectionCodeName())
                 .iscedLevel(programDto.getIscedLevel())
                 .nqfLevel(programDto.getNqfLevel())
                 .sqfLevel(programDto.getSqfLevel())
                 .studyDurationYears(programDto.getStudyDurationYears())
-                .creditsCount(programDto.getCreditsCount()) // Updated field name
+                .creditsCount(programDto.getCreditsCount())
                 .createdDate(LocalDateTime.now())
                 .modifiedDate(LocalDateTime.now())
                 .build();

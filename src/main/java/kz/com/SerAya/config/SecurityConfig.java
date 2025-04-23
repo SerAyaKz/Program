@@ -70,7 +70,8 @@ public class SecurityConfig {
                                                 "/api/auth/register",
                                                 "api/auth/user/**",
                                                 "/course/user/**",
-                                                "/program/user/**"
+                                                "/program/user/**",
+                                                "/dashboard"
 
 
 
