@@ -77,6 +77,7 @@ public class JobServiceImpl implements JobService {
 
         existingJob.setName(jobDto.getName());
         existingJob.setDescription(jobDto.getDescription());
+        existingJob.setJob_type(jobDto.getJob_type());
         repository.save(existingJob);
     }
 
