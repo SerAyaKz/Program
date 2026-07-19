@@ -1,6 +1,7 @@
 package kz.com.SerAya.controller;
 
 import kz.com.SerAya.dto.CourseDto;
+import kz.com.SerAya.dto.ProgramDataDto;
 import kz.com.SerAya.dto.ProgramDto;
 import kz.com.SerAya.entity.Program;
 import kz.com.SerAya.service.ProgramService;
@@ -56,5 +57,12 @@ public class ProgramController {
     @RequestMapping(value="/dashboard", method=RequestMethod.GET, headers = "Accept=application/json")
     public ResponseEntity<Map<String, Object>> getDashboardData() {
         return ResponseEntity.ok(programService.getDashboardData());
+    }
+
+    @RequestMapping(value="/program/data/{id}", method=RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseEntity<ProgramDataDto> findDataById(
+            @PathVariable("id") Integer id
+    ) {
+        return ResponseEntity.ok(programService.findProgramDataById(id));
     }
 }

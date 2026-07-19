@@ -1,13 +1,10 @@
 package kz.com.SerAya.service.impl;
 
+import kz.com.SerAya.dto.ProgramDataDto;
 import kz.com.SerAya.dto.ProgramDto;
 import kz.com.SerAya.dto.SectionDto;
-import kz.com.SerAya.entity.Program;
-import kz.com.SerAya.entity.Section;
-import kz.com.SerAya.repository.CourseProgramRepository;
-import kz.com.SerAya.repository.LearningOutcomeRepository;
-import kz.com.SerAya.repository.ProgramRepository;
-import kz.com.SerAya.repository.SectionRepository;
+import kz.com.SerAya.entity.*;
+import kz.com.SerAya.repository.*;
 import kz.com.SerAya.service.ProgramService;
 import kz.com.SerAya.service.SectionService;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +28,8 @@ public class ProgramServiceImpl implements ProgramService {
     private final SectionRepository sectionRepository;
     private final LearningOutcomeRepository learningOutcomeRepository;
     private final CourseProgramRepository courseProgramRepository;
+    private final JobRepository jobRepository;
+    private final StandardRepository standardRepository;
 
     @Override
     public Integer save(ProgramDto dto) {
@@ -221,6 +220,24 @@ public class ProgramServiceImpl implements ProgramService {
         response.put("courseDurationSummary", getCourseDurationSummary());
 
         return response;
+    }
+
+    @Override
+    public ProgramDataDto findProgramDataById(Integer id) {
+        Program program = repository.findById(id).orElseThrow();
+
+        List<Job> jobs = jobRepository.findJobsByProgram(id);
+        List<Standard> standards = standardRepository.findStandardsByProgram(id);
+        List<LearningOutcome> outcomes = learningOutcomeRepository.findLearningOutcomesByProgram(id);
+        List<CourseProgram> courses = courseProgramRepository.findCourseProgramsByProgram(id);
+
+        return ProgramDataDto.fromEntity(
+                program,
+                jobs,
+                standards,
+                outcomes,
+                courses
+        );
     }
 
     /**

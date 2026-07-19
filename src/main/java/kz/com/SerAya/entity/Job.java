@@ -21,12 +21,28 @@ public class Job {
     private Integer id;
 
     @JsonProperty("job_title")
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name = "nameEn")
+    private String nameEn;
 
     @JsonProperty("job_description")
-    @Column(name = "description", nullable = false)
-    private String description;
+    @Column(name = "descriptionEn")
+    private String descriptionEn;
+
+    @JsonProperty("job_title")
+    @Column(name = "nameRu")
+    private String nameRu;
+
+    @JsonProperty("job_description")
+    @Column(name = "descriptionRu")
+    private String descriptionRu;
+
+    @JsonProperty("job_title")
+    @Column(name = "nameKz")
+    private String nameKz;
+
+    @JsonProperty("job_description")
+    @Column(name = "descriptionKz")
+    private String descriptionKz;
 
     @Column(name = "job_type")
     private String job_type;

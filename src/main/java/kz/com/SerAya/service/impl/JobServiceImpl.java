@@ -34,6 +34,7 @@ public class JobServiceImpl implements JobService {
     private final ProgramJobRepository programJobRepository;
     @Override
     public Integer save(JobDto dto) {
+        System.out.println(dto.toString());
         Job job = JobDto.toEntity(dto);
         Job savedJob = repository.save(job);
         programJobRepository.addJobToProgram(dto.getProgramId(), job.getId());
@@ -74,10 +75,17 @@ public class JobServiceImpl implements JobService {
 
         Job existingJob = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No job found with the ID: " + id));
-
-        existingJob.setName(jobDto.getName());
-        existingJob.setDescription(jobDto.getDescription());
+        if(Objects.equals(jobDto.getJob_type(), "atlas")){
+            jobDto.setJob_type("Changed Atlas by User");
+        }
+        existingJob.setNameEn(jobDto.getNameEn());
+        existingJob.setDescriptionEn(jobDto.getDescriptionEn());
+        existingJob.setNameRu(jobDto.getNameRu());
+        existingJob.setDescriptionRu(jobDto.getDescriptionRu());
+        existingJob.setNameKz(jobDto.getNameKz());
+        existingJob.setDescriptionKz(jobDto.getDescriptionKz());
         existingJob.setJob_type(jobDto.getJob_type());
+
         repository.save(existingJob);
     }
 
@@ -131,7 +139,7 @@ public class JobServiceImpl implements JobService {
 
         // Create a description JSON object
         Map<String, String> requestBody = new HashMap<>();
-        requestBody.put("job_name", job.getName());
+//        requestBody.put("job_name", job.getName());
 
         // Convert to JSON string
         ObjectMapper objectMapper = new ObjectMapper();

@@ -1,5 +1,6 @@
 package kz.com.SerAya.service.impl;
 
+import kz.com.SerAya.dto.CourseDto;
 import kz.com.SerAya.dto.CourseProgramDto;
 import kz.com.SerAya.dto.JobDto;
 import kz.com.SerAya.entity.CourseProgram;
@@ -14,6 +15,7 @@ import kz.com.SerAya.service.CourseProgramService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -64,7 +66,9 @@ public class CourseProgramServiceImpl implements CourseProgramService {
         dto.setTerm(courseProgram.getTerm());
         dto.setCreditCount(courseProgram.getCreditCount());
         dto.setProgramId(courseProgram.getProgram().getId());
-        dto.setCourseId(courseProgram.getCourse().getId());
+        CourseDto courseDto=  courseRepository.findById(courseProgram.getCourse().getId()).map(CourseDto::fromEntity)
+                .orElseThrow(() -> new EntityNotFoundException("No course found with the ID : " + courseProgram.getCourse().getId()));;
+        dto.setCourse(courseDto);
         return dto;
     }
 
@@ -77,7 +81,7 @@ public class CourseProgramServiceImpl implements CourseProgramService {
         Program program = programRepository.findById(dto.getProgramId()).orElseThrow(() -> new RuntimeException("Program not found"));
         courseProgram.setProgram(program);
 
-        Course course = courseRepository.findById(dto.getCourseId()).orElseThrow(() -> new RuntimeException("Course not found"));
+        Course course = courseRepository.findById(dto.getCourse().getId()).orElseThrow(() -> new RuntimeException("Course not found"));
         courseProgram.setCourse(course);
 
         return courseProgram;
@@ -94,7 +98,8 @@ public class CourseProgramServiceImpl implements CourseProgramService {
         }
 
         if (courseProgram.getCourse() != null) {
-            dto.setCourseId(courseProgram.getCourse().getId());
+            dto.setCourse(courseRepository.findById(courseProgram.getCourse().getId()).map(CourseDto::fromEntity)
+                    .orElseThrow(() -> new EntityNotFoundException("No course found with the ID : " + courseProgram.getCourse().getId())));
         }
 
         return dto;

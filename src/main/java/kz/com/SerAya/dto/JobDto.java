@@ -13,8 +13,12 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 public class JobDto {
     private Integer id;
-    private String name;
-    private String description;
+    private String nameEn;
+    private String descriptionEn;
+    private String nameRu;
+    private String descriptionRu;
+    private String nameKz;
+    private String descriptionKz;
     private String job_type;
     private Integer programId;
 
@@ -25,8 +29,12 @@ public class JobDto {
 
         return JobDto.builder()
                 .id(job.getId())
-                .name(job.getName())
-                .description(job.getDescription())
+                .nameEn(job.getNameEn())
+                .descriptionEn(job.getDescriptionEn())
+                .nameRu(job.getNameRu())
+                .descriptionRu(job.getDescriptionRu())
+                .nameKz(job.getNameKz())
+                .descriptionKz(job.getDescriptionKz())
                 .job_type(job.getJob_type()) // Ensure correct mapping
                 .programId(programId)
                 .build();
@@ -39,8 +47,12 @@ public class JobDto {
 
         return Job.builder()
                 .id(jobDto.getId())
-                .name(jobDto.getName())
-                .description(jobDto.getDescription())
+                .nameEn(jobDto.getNameEn())
+                .descriptionEn(jobDto.getDescriptionEn())
+                .nameRu(jobDto.getNameRu())
+                .descriptionRu(jobDto.getDescriptionRu())
+                .nameKz(jobDto.getNameKz())
+                .descriptionKz(jobDto.getDescriptionKz())
                 .job_type(jobDto.getJob_type()) // Corrected mapping
                 .build();
     }

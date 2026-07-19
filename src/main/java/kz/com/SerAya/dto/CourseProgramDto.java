@@ -22,7 +22,7 @@ public class CourseProgramDto {
     private Integer term;
     private Integer creditCount;
     private Integer programId;
-    private Integer courseId;
+    private CourseDto course;
     private Set<Integer> learningOutcomeIds;
 
     public static CourseProgramDto fromEntity(CourseProgram courseProgram) {
@@ -35,7 +35,9 @@ public class CourseProgramDto {
                 .term(courseProgram.getTerm())
                 .creditCount(courseProgram.getCreditCount())
                 .programId(courseProgram.getProgram() != null ? courseProgram.getProgram().getId() : null)
-                .courseId(courseProgram.getCourse() != null ? courseProgram.getCourse().getId() : null)
+                .course(courseProgram.getCourse() != null
+                        ? CourseDto.fromEntity(courseProgram.getCourse())
+                        : null)
                 .build();
     }
 
