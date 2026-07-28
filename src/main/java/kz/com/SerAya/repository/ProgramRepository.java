@@ -10,9 +10,9 @@ import java.util.List;
 public interface ProgramRepository extends JpaRepository<Program, Integer> {
     @Query(
             value = "SELECT programs.* \n" +
-                    "FROM programs inner join program_user " +
-                    "on programs.id=program_user.program_id\n" +
-                    "WHERE program_user.user_id = ?1",
+                    "FROM programs inner join user_programs " +
+                    "on programs.id=user_programs.program_id\n" +
+                    "WHERE user_programs.user_id = ?1",
             nativeQuery = true)
     List<Program> findAllByUser(int id);
 
@@ -46,7 +46,7 @@ public interface ProgramRepository extends JpaRepository<Program, Integer> {
     List<Object[]> userLoginsByDate();
 
     // 7. Program Participation
-    @Query(value = "SELECT p.id, p.code_name, COUNT(pu.user_id) as user_count FROM programs p LEFT JOIN program_user pu ON p.id = pu.program_id GROUP BY p.id, p.code_name ORDER BY user_count DESC", nativeQuery = true)
+    @Query(value = "SELECT p.id, p.code_name, COUNT(pu.user_id) as user_count FROM programs p LEFT JOIN user_programs pu ON p.id = pu.program_id GROUP BY p.id, p.code_name ORDER BY user_count DESC", nativeQuery = true)
     List<Object[]> countUsersByProgram();
 
     // 8. Course Assignment Distribution
@@ -88,7 +88,7 @@ public interface ProgramRepository extends JpaRepository<Program, Integer> {
     // 14. Recent Program Activity
     @Query(value = "SELECT p.code_name, COUNT(pu.user_id) as users, p.created_date " +
             "FROM programs p " +
-            "LEFT JOIN program_user pu ON p.id = pu.program_id " +
+            "LEFT JOIN user_programs pu ON p.id = pu.program_id " +
             "GROUP BY p.id, p.code_name, p.created_date " +
             "ORDER BY p.created_date DESC LIMIT 10", nativeQuery = true)
     List<Object[]> getRecentProgramActivity();

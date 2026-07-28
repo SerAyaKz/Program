@@ -1,5 +1,6 @@
 package kz.com.SerAya.service.impl;
 
+import kz.com.SerAya.dto.CourseDto;
 import kz.com.SerAya.dto.UserDto;
 import kz.com.SerAya.entity.User;
 import kz.com.SerAya.repository.UserRepository;
@@ -7,6 +8,7 @@ import kz.com.SerAya.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -43,9 +45,14 @@ public class UserServiceImpl implements UserService {
         if (existingUser.isPresent() ) {
             User user = existingUser.get();
             user.setDisplayName(userDto.getDisplayName());
-            user.setEmail(userDto.getEmail());
+//            user.setEmail(userDto.getEmail());
             user.setPhotoUrl(userDto.getPhotoUrl());
-            user.setTitle(userDto.getTitle());
+            user.setFullNameKz(userDto.getFullNameKz());
+            user.setFullNameEn(userDto.getFullNameEn());
+            user.setFullNameRu(userDto.getFullNameRu());
+            user.setJobTitleEn(userDto.getJobTitleEn());
+            user.setJobTitleKz(userDto.getJobTitleKz());
+            user.setJobTitleRu(userDto.getJobTitleRu());
             user.setLastLogin(LocalDateTime.now());
             user.setRoleId(userDto.getRoleId());
             return userRepository.save(user);
@@ -79,7 +86,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto findById(Integer id) {
-        return null;
+        return userRepository.findById(id)
+                .map(UserDto::fromEntity)
+                .orElseThrow(() -> new EntityNotFoundException("No user found with the ID : " + id));
     }
 
     @Override

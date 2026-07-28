@@ -34,7 +34,22 @@ public class User {
     private String photoUrl;
 
     @Column
-    private String title;
+    private String fullNameEn;
+
+    @Column
+    private String fullNameKz;
+
+    @Column
+    private String fullNameRu;
+
+    @Column
+    private String jobTitleEn;
+
+    @Column
+    private String jobTitleKz;
+
+    @Column
+    private String jobTitleRu;
 
     @Column
     private Integer roleId;

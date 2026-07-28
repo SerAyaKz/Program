@@ -24,37 +24,37 @@ public class Program {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "codeName", nullable = false)
+    @Column(name = "codeName", nullable = true)
     private String codeName;
 
-    @Column(name = "academicDegree", nullable = false)
+    @Column(name = "academicDegree", nullable = true)
     private String academicDegree;
 
-    @Column(name = "eduGoalKz", nullable = false)
+    @Column(name = "eduGoalKz", nullable = true)
     private String eduGoalKz;
 
-    @Column(name = "eduGoalRu", nullable = false)
+    @Column(name = "eduGoalRu", nullable = true)
     private String eduGoalRu;
 
-    @Column(name = "eduGoalEn", nullable = false)
+    @Column(name = "eduGoalEn", nullable = true)
     private String eduGoalEn;
 
-    @Column(name = "direction_code_name", nullable = false)
+    @Column(name = "direction_code_name", nullable = true)
     private String directionCodeName;
 
     @Column(name = "isced_level", nullable = true)
     private Integer iscedLevel;
 
-    @Column(name = "nqf_level", nullable = false)
+    @Column(name = "nqf_level", nullable = true)
     private int nqfLevel;
 
-    @Column(name = "sqf_level", nullable = false)
+    @Column(name = "sqf_level", nullable = true)
     private int sqfLevel;
 
-    @Column(name = "study_duration_years", nullable = false)
+    @Column(name = "study_duration_years", nullable = true)
     private int studyDurationYears;
 
-    @Column(name = "creditsCount", nullable = false)
+    @Column(name = "creditsCount", nullable = true)
     private int creditsCount;
 
     @CreatedDate

@@ -31,7 +31,17 @@ public class UserDto {
     @NotEmpty(message = "Le mot de passe ne doit pas etre vide")
     @NotBlank(message = "Le mot de passe ne doit pas etre vide")
     private String photoUrl;
-    private String title;
+    private String fullNameEn;
+
+    private String fullNameKz;
+
+    private String fullNameRu;
+
+    private String jobTitleEn;
+
+    private String jobTitleKz;
+
+    private String jobTitleRu;
     private Integer roleId;
     private String uid;
 
@@ -42,7 +52,12 @@ public class UserDto {
                 .displayName(user.getDisplayName())
                 .email(user.getEmail())
                 .photoUrl(user.getPhotoUrl())
-                .title(user.getTitle())
+                .fullNameEn(user.getFullNameEn())
+                .fullNameKz(user.getFullNameKz())
+                .fullNameRu(user.getFullNameRu())
+                .jobTitleEn(user.getJobTitleEn())
+                .jobTitleKz(user.getJobTitleKz())
+                .jobTitleRu(user.getJobTitleRu())
                 .roleId(user.getRoleId())
                 .uid(user.getUid())
                 .build();
@@ -55,7 +70,12 @@ public class UserDto {
                 .displayName(user.getDisplayName())
                 .email(user.getEmail())
                 .photoUrl(user.getPhotoUrl())
-                .title(user.getTitle())
+                .fullNameEn(user.getFullNameEn())
+                .fullNameKz(user.getFullNameKz())
+                .fullNameRu(user.getFullNameRu())
+                .jobTitleEn(user.getJobTitleEn())
+                .jobTitleKz(user.getJobTitleKz())
+                .jobTitleRu(user.getJobTitleRu())
                 .roleId(user.getRoleId())
                 .uid(user.getUid())
                 .build();

@@ -75,7 +75,7 @@ public class JobServiceImpl implements JobService {
 
         Job existingJob = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No job found with the ID: " + id));
-        if(Objects.equals(jobDto.getJob_type(), "atlas")){
+        if(Objects.equals(jobDto.getJob_type(), "Atlas")){
             jobDto.setJob_type("Changed Atlas by User");
         }
         existingJob.setNameEn(jobDto.getNameEn());

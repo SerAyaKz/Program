@@ -57,7 +57,7 @@ public class ProgramDto {
         }
 
         return Program.builder()
-                .id(programDto.getId())
+//                .id(programDto.getId())
                 .codeName(programDto.getCodeName())
                 .academicDegree(programDto.getAcademicDegree())
                 .eduGoalKz(programDto.getEduGoalKz())

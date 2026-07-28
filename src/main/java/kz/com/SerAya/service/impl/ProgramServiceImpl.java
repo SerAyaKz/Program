@@ -78,7 +78,7 @@ public class ProgramServiceImpl implements ProgramService {
     public void update(Integer id, ProgramDto programDto) {
 
         Program existingProgram = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("No standard found with the ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("No program found with the ID: " + id));
 
         existingProgram.setCodeName(programDto.getCodeName()); // Updated field name
         existingProgram.setAcademicDegree(programDto.getAcademicDegree()); // Assuming it exists in DTO
@@ -239,6 +239,21 @@ public class ProgramServiceImpl implements ProgramService {
                 courses
         );
     }
+
+//    @Override
+//    public List<ProgramUserDto> findProgramUserByUserId(Integer id) {
+//        Program program = repository.findById(id).orElseThrow();
+//
+//        List<User> users = courseProgramRepository.findCourseProgramsByProgram(id);
+//
+//        return ProgramDataDto.fromEntity(
+//                program,
+//                jobs,
+//                standards,
+//                outcomes,
+//                courses
+//        );
+//    }
 
     /**
      * Retrieves dashboard data for a specific program
