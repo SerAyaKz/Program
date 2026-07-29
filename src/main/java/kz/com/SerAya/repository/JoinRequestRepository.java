@@ -1,6 +1,6 @@
 package kz.com.SerAya.repository; // TODO: adjust to your actual base package
 
-import kz.com.SerAya.dto.JoinRequest;
+import kz.com.SerAya.entity.JoinRequest;
 import kz.com.SerAya.enums.JoinRequestStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 

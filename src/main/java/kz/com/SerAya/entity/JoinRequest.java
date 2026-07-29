@@ -1,7 +1,5 @@
-package kz.com.SerAya.dto; // TODO: adjust to your actual base package
+package kz.com.SerAya.entity; // TODO: adjust to your actual base package
 
-import kz.com.SerAya.entity.Program;
-import kz.com.SerAya.entity.User;
 import kz.com.SerAya.enums.JoinRequestStatus;
 import lombok.*;
 
