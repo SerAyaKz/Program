@@ -17,9 +17,9 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -96,16 +96,45 @@ public class JoinRequestService {
      * Used to populate the "Join Requests" dialog for that user.
      */
     public List<JoinRequestDto> getPendingRequestsForOwner(Integer ownerId) {
-        List<UserProgram> memberships = userProgramRepository.findByUserId(ownerId);
+//        List<UserProgram> memberships = userProgramRepository.findByUserId(ownerId);
+//
+//        return memberships.stream()
+//                .map(UserProgram::getProgram)
+//                .filter(program -> ownerId.equals(getProgramOwnerId(program.getId())))
+//                .flatMap(program -> joinRequestRepository
+//                        .findByProgramIdAndStatus(program.getId(), JoinRequestStatus.PENDING)
+//                        .stream())
+//                .map(JoinRequestDto::fromEntity)
+//                .collect(Collectors.toList());
 
-        return memberships.stream()
+        List<UserProgram> memberships = userProgramRepository.findByUserId(ownerId);
+        System.out.println(memberships.size());
+        System.out.println(memberships);
+        List<Program> programs = memberships.stream()
                 .map(UserProgram::getProgram)
+                .collect(Collectors.toList());
+        System.out.println(programs.size());
+        System.out.println(programs);
+        List<Program> ownedPrograms = programs.stream()
                 .filter(program -> ownerId.equals(getProgramOwnerId(program.getId())))
-                .flatMap(program -> joinRequestRepository
-                        .findByProgramIdAndStatus(program.getId(), JoinRequestStatus.PENDING)
-                        .stream())
+                .collect(Collectors.toList());
+        System.out.println(ownedPrograms.size());
+        System.out.println(ownedPrograms);
+        List<JoinRequest> requests = ownedPrograms.stream()
+                .flatMap(program ->
+                        joinRequestRepository
+                                .findByProgramIdAndStatus(
+                                        program.getId(),
+                                        JoinRequestStatus.PENDING)
+                                .stream())
+                .collect(Collectors.toList());
+        System.out.println(requests.size());
+        System.out.println(requests);
+        List<JoinRequestDto> result = requests.stream()
                 .map(JoinRequestDto::fromEntity)
                 .collect(Collectors.toList());
+        System.out.println(result);
+        return result;
     }
 
     /** Approves a request — only the program owner may do this. */
@@ -152,5 +181,68 @@ public class JoinRequestService {
         joinRequestRepository.save(joinRequest);
 
         return JoinRequestDto.fromEntity(joinRequest);
+    }
+
+    /**
+     * Removes a member from a program. Only the program owner may do this,
+     * and the owner cannot remove themselves.
+     */
+    @Transactional
+    public void removeMember(Integer programId, Integer memberId, Integer requesterId) {
+        Integer ownerId = getProgramOwnerId(programId);
+
+        if (!ownerId.equals(requesterId)) {
+            throw new AccessDeniedException("Only the program owner can remove members");
+        }
+        if (memberId.equals(ownerId)) {
+            throw new IllegalStateException("The program owner cannot remove themselves");
+        }
+
+        UserProgram membership = userProgramRepository.findByUserIdAndProgramId(memberId, programId)
+                .orElseThrow(() -> new NoSuchElementException("User is not a member of this program"));
+
+        userProgramRepository.delete(membership);
+    }
+
+    /** Lists members of a program so the owner can choose who to remove. */
+    public List<ProgramUserDto> getProgramMembers(Integer programId) {
+        return userProgramRepository.findByProgramId(programId)
+                .stream()
+                .map(UserProgram::getUser)
+                .map(user -> ProgramUserDto.fromEntity(user, List.of()))
+                .collect(Collectors.toList());
+    }
+
+    public List<ProgramUserDto> getAllUsersWithProgramsByOwner(Integer ownerId) {
+
+        List<User> users = userRepository.findUsersInOwnersPrograms(ownerId);
+
+        List<Integer> ownerProgramIds = userProgramRepository.findOwnersPrograms(ownerId);
+        List<Integer> ownerCreatedProgramIds = userProgramRepository.findOnlyOwnersPrograms(ownerId);
+// general streaming all users based on owner's programs
+        List<ProgramUserDto> sss = users.stream()
+                .map(user -> {
+                    List<ProgramDto> programs = userProgramRepository.findByUserId(user.getId())
+                            .stream()
+                            .filter(up -> ownerProgramIds.contains(up.getProgram().getId()))
+                            .map(UserProgram::getProgram)
+                            .map(ProgramDto::fromEntity)
+                            .toList();
+
+                    return ProgramUserDto.fromEntity(user, programs);
+                })
+                .toList();
+        // removing not created by owner programs from owner ProgramUserDto
+        for (ProgramUserDto dto : sss) {
+            if (Objects.equals(dto.getId(), ownerId)) {
+                dto.setPrograms(
+                        dto.getPrograms().stream()
+                                .filter(program -> ownerCreatedProgramIds.contains(program.getId()))
+                                .toList()
+                );
+            }
+        }
+
+        return sss;
     }
 }

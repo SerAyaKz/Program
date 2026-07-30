@@ -76,7 +76,10 @@ public class SecurityConfig {
                                                 "/api/users",
                                                 "/api/programs",
                                                 "/api/join-requests/**",
-                                                "/api/join-requests/pending/owner"
+                                                "/api/join-requests/pending/owner",
+                                                "/program/**/members",
+                                                "/program/**/members/**",
+                                                "/api/owner/**"
 
 
 

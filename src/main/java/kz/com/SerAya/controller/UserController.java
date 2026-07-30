@@ -30,5 +30,12 @@ public class UserController {
         return ResponseEntity.ok(userService.findById(id));
     }
 
+    @RequestMapping(value="/api/owner/{id}", method=RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseEntity<List<ProgramUserDto>> getOwner(@PathVariable("id") Integer id) {
+        return ResponseEntity.ok(joinRequestService.getAllUsersWithProgramsByOwner(id));
+    }
+
+
+
 
 }

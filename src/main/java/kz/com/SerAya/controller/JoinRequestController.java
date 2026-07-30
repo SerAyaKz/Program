@@ -16,10 +16,10 @@ import java.util.Map;
 public class JoinRequestController {
     private final JoinRequestService joinRequestService;
 
-    @RequestMapping(value="/user/{id}", method=RequestMethod.GET, headers = "Accept=application/json")
-    public ResponseEntity<List<ProgramUserDto>> getAllUsers() {
-        return ResponseEntity.ok(joinRequestService.getAllUsersWithPrograms());
-    }
+//    @RequestMapping(value="/user/{id}", method=RequestMethod.GET, headers = "Accept=application/json")
+//    public ResponseEntity<List<ProgramUserDto>> getAllUsers() {
+//        return ResponseEntity.ok(joinRequestService.getAllUsersWithPrograms());
+//    }
 
     @RequestMapping(value="/api/join-requests", method=RequestMethod.POST, headers = "Accept=application/json")
     public ResponseEntity<JoinRequestDto> requestToJoin(@Valid @RequestBody JoinRequestDto request) {
@@ -51,6 +51,20 @@ public class JoinRequestController {
     public JoinRequestDto reject(@PathVariable Integer id, @RequestParam Integer approverId) {
         return joinRequestService.reject(id, approverId);
     }
+    @GetMapping("/program/{programId}/members")
+    public ResponseEntity<List<ProgramUserDto>> getMembers(@PathVariable Integer programId) {
+        return ResponseEntity.ok(joinRequestService.getProgramMembers(programId));
+    }
+
+    @DeleteMapping("/program/{programId}/members/{memberId}")
+    public ResponseEntity<Void> removeMember(@PathVariable Integer programId,
+                                             @PathVariable Integer memberId,
+                                             @RequestParam Integer requesterId) {
+        joinRequestService.removeMember(programId, memberId, requesterId);
+        return ResponseEntity.noContent().build();
+    }
+
+
 
 
     // Basic error handling so duplicate/invalid requests return sensible HTTP codes
