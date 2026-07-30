@@ -96,62 +96,22 @@ public class JoinRequestService {
      * Used to populate the "Join Requests" dialog for that user.
      */
     public List<JoinRequestDto> getPendingRequestsForOwner(Integer ownerId) {
-//        List<UserProgram> memberships = userProgramRepository.findByUserId(ownerId);
-//
-//        return memberships.stream()
-//                .map(UserProgram::getProgram)
-//                .filter(program -> ownerId.equals(getProgramOwnerId(program.getId())))
-//                .flatMap(program -> joinRequestRepository
-//                        .findByProgramIdAndStatus(program.getId(), JoinRequestStatus.PENDING)
-//                        .stream())
-//                .map(JoinRequestDto::fromEntity)
-//                .collect(Collectors.toList());
-
-        List<UserProgram> memberships = userProgramRepository.findByUserId(ownerId);
-        System.out.println(memberships.size());
-        System.out.println(memberships);
-        List<Program> programs = memberships.stream()
-                .map(UserProgram::getProgram)
-                .collect(Collectors.toList());
-        System.out.println(programs.size());
-        System.out.println(programs);
-        List<Program> ownedPrograms = programs.stream()
-                .filter(program -> ownerId.equals(getProgramOwnerId(program.getId())))
-                .collect(Collectors.toList());
-        System.out.println(ownedPrograms.size());
-        System.out.println(ownedPrograms);
-        List<JoinRequest> requests = ownedPrograms.stream()
-                .flatMap(program ->
-                        joinRequestRepository
-                                .findByProgramIdAndStatus(
-                                        program.getId(),
-                                        JoinRequestStatus.PENDING)
-                                .stream())
-                .collect(Collectors.toList());
-        System.out.println(requests.size());
-        System.out.println(requests);
-        List<JoinRequestDto> result = requests.stream()
+        return joinRequestRepository
+                .findPendingRequestsForOwner(ownerId, "PENDING")
+                .stream()
                 .map(JoinRequestDto::fromEntity)
-                .collect(Collectors.toList());
-        System.out.println(result);
-        return result;
+                .toList();
     }
 
     /** Approves a request — only the program owner may do this. */
     @Transactional
-    public JoinRequestDto approve(Integer requestId, Integer approverId) {
+    public JoinRequestDto approve(Integer requestId) {
         JoinRequest joinRequest = joinRequestRepository.findById(requestId)
                 .orElseThrow(() -> new NoSuchElementException("Join request not found: " + requestId));
-
-        Integer ownerId = getProgramOwnerId(joinRequest.getProgram().getId());
-        if (!ownerId.equals(approverId)) {
-            throw new AccessDeniedException("Only the program owner can approve this request");
-        }
 
         joinRequest.setStatus(JoinRequestStatus.APPROVED);
         joinRequest.setResolvedDate(LocalDateTime.now());
         joinRequestRepository.save(joinRequest);
-
         if (!userProgramRepository.existsByUserIdAndProgramId(
                 joinRequest.getUser().getId(), joinRequest.getProgram().getId())) {
             UserProgram membership = UserProgram.builder()
@@ -161,20 +121,15 @@ public class JoinRequestService {
                     .build();
             userProgramRepository.save(membership);
         }
-
         return JoinRequestDto.fromEntity(joinRequest);
     }
 
     /** Rejects a request — only the program owner may do this. */
     @Transactional
-    public JoinRequestDto reject(Integer requestId, Integer approverId) {
+    public JoinRequestDto reject(Integer requestId) {
         JoinRequest joinRequest = joinRequestRepository.findById(requestId)
                 .orElseThrow(() -> new NoSuchElementException("Join request not found: " + requestId));
 
-        Integer ownerId = getProgramOwnerId(joinRequest.getProgram().getId());
-        if (!ownerId.equals(approverId)) {
-            throw new AccessDeniedException("Only the program owner can reject this request");
-        }
 
         joinRequest.setStatus(JoinRequestStatus.REJECTED);
         joinRequest.setResolvedDate(LocalDateTime.now());
@@ -217,11 +172,15 @@ public class JoinRequestService {
 
         List<User> users = userRepository.findUsersInOwnersPrograms(ownerId);
 
-        List<Integer> ownerProgramIds = userProgramRepository.findOwnersPrograms(ownerId);
-        List<Integer> ownerCreatedProgramIds = userProgramRepository.findOnlyOwnersPrograms(ownerId);
-// general streaming all users based on owner's programs
-        List<ProgramUserDto> sss = users.stream()
+        Set<Integer> ownerProgramIds =
+                new HashSet<>(userProgramRepository.findOwnersPrograms(ownerId));
+
+        Set<Integer> ownerCreatedProgramIds =
+                new HashSet<>(userProgramRepository.findOnlyOwnersPrograms(ownerId));
+
+        return users.stream()
                 .map(user -> {
+
                     List<ProgramDto> programs = userProgramRepository.findByUserId(user.getId())
                             .stream()
                             .filter(up -> ownerProgramIds.contains(up.getProgram().getId()))
@@ -229,20 +188,14 @@ public class JoinRequestService {
                             .map(ProgramDto::fromEntity)
                             .toList();
 
+                    if (Objects.equals(user.getId(), ownerId)) {
+                        programs = programs.stream()
+                                .filter(program -> ownerCreatedProgramIds.contains(program.getId()))
+                                .toList();
+                    }
+
                     return ProgramUserDto.fromEntity(user, programs);
                 })
                 .toList();
-        // removing not created by owner programs from owner ProgramUserDto
-        for (ProgramUserDto dto : sss) {
-            if (Objects.equals(dto.getId(), ownerId)) {
-                dto.setPrograms(
-                        dto.getPrograms().stream()
-                                .filter(program -> ownerCreatedProgramIds.contains(program.getId()))
-                                .toList()
-                );
-            }
-        }
-
-        return sss;
     }
 }

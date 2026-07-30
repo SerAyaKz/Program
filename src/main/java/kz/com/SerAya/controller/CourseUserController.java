@@ -20,6 +20,11 @@ public class CourseUserController {
         return ResponseEntity.ok(courseUserService.findAllByUserId(id));
     }
 
+    @RequestMapping(value="/course/program/{id}",method= RequestMethod.GET, headers = "Accept=application/json")
+    public ResponseEntity<List<CourseDto>> findProgramAll(@PathVariable("id") Integer id) {
+        return ResponseEntity.ok(courseUserService.findAllProgramByUserId(id));
+    }
+
     @RequestMapping(value = "/course/user/{id}", method = RequestMethod.DELETE, headers = "Accept=application/json")
     public ResponseEntity<Void> delete(
             @PathVariable("id") Integer id,

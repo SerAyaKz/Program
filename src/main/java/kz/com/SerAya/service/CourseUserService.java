@@ -49,4 +49,11 @@ public class CourseUserService {
     public void deleteByUserId(Integer userId, Integer course) {
         courseUserRepository.removeCourseFromUser(userId,course);
     }
+
+    public List<CourseDto> findAllProgramByUserId(Integer programId) {
+        return courseRepository.findAllProgramByUser(programId)
+                .stream()
+                .map(CourseDto::fromEntity)
+                .collect(Collectors.toList());
+    }
 }

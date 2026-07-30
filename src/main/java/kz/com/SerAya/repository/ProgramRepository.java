@@ -9,10 +9,18 @@ import java.util.List;
 
 public interface ProgramRepository extends JpaRepository<Program, Integer> {
     @Query(
-            value = "SELECT programs.* \n" +
-                    "FROM programs inner join user_programs " +
-                    "on programs.id=user_programs.program_id\n" +
-                    "WHERE user_programs.user_id = ?1",
+            value = "SELECT DISTINCT p.*\n" +
+                    "FROM programs p\n" +
+                    "WHERE p.id IN (\n" +
+                    "    SELECT owner_up.program_id\n" +
+                    "    FROM user_programs owner_up\n" +
+                    "    WHERE owner_up.user_id = ?1\n" +
+                    "      AND owner_up.joined_date = (\n" +
+                    "          SELECT MIN(up2.joined_date)\n" +
+                    "          FROM user_programs up2\n" +
+                    "          WHERE up2.program_id = owner_up.program_id\n" +
+                    "      )\n" +
+                    ")",
             nativeQuery = true)
     List<Program> findAllByUser(int id);
 

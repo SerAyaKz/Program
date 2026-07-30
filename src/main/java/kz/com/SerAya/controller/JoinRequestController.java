@@ -42,14 +42,14 @@ public class JoinRequestController {
 
     // PATCH /api/join-requests/{id}/approve?approverId=5
     @RequestMapping(value="/api/join-requests/{id}/approve", method=RequestMethod.PATCH, headers = "Accept=application/json")
-    public JoinRequestDto approve(@PathVariable Integer id, @RequestParam Integer approverId) {
-        return joinRequestService.approve(id, approverId);
+    public JoinRequestDto approve(@PathVariable Integer id) {
+        return joinRequestService.approve(id);
     }
 
     // PATCH /api/join-requests/{id}/reject?approverId=5
     @RequestMapping(value="/api/join-requests/{id}/reject", method=RequestMethod.PATCH, headers = "Accept=application/json")
-    public JoinRequestDto reject(@PathVariable Integer id, @RequestParam Integer approverId) {
-        return joinRequestService.reject(id, approverId);
+    public JoinRequestDto reject(@PathVariable Integer id) {
+        return joinRequestService.reject(id);
     }
     @GetMapping("/program/{programId}/members")
     public ResponseEntity<List<ProgramUserDto>> getMembers(@PathVariable Integer programId) {

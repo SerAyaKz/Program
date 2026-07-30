@@ -70,6 +70,7 @@ public class SecurityConfig {
                                                 "/api/auth/register",
                                                 "/api/user/**",
                                                 "/course/user/**",
+                                                "/course/program/**",
                                                 "/program/user/**",
                                                 "/dashboard",
 
@@ -79,7 +80,11 @@ public class SecurityConfig {
                                                 "/api/join-requests/pending/owner",
                                                 "/program/**/members",
                                                 "/program/**/members/**",
-                                                "/api/owner/**"
+                                                "/api/owner/**",
+                                                "/api/join-requests/**/approve",
+                                                "/api/join-requests/**/reject",
+                                                "/api/join-requests/**/**",
+                                                "/api/join-requests/**"
 
 
 

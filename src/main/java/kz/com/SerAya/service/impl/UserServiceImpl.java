@@ -44,18 +44,21 @@ public class UserServiceImpl implements UserService {
 
         if (existingUser.isPresent() ) {
             User user = existingUser.get();
-            user.setDisplayName(userDto.getDisplayName());
+            if (userDto.getId()!=0) {
+                user.setDisplayName(userDto.getDisplayName());
 //            user.setEmail(userDto.getEmail());
-            user.setPhotoUrl(userDto.getPhotoUrl());
-            user.setFullNameKz(userDto.getFullNameKz());
-            user.setFullNameEn(userDto.getFullNameEn());
-            user.setFullNameRu(userDto.getFullNameRu());
-            user.setJobTitleEn(userDto.getJobTitleEn());
-            user.setJobTitleKz(userDto.getJobTitleKz());
-            user.setJobTitleRu(userDto.getJobTitleRu());
-            user.setLastLogin(LocalDateTime.now());
-            user.setRoleId(userDto.getRoleId());
-            return userRepository.save(user);
+                user.setPhotoUrl(userDto.getPhotoUrl());
+                user.setFullNameKz(userDto.getFullNameKz());
+                user.setFullNameEn(userDto.getFullNameEn());
+                user.setFullNameRu(userDto.getFullNameRu());
+                user.setJobTitleEn(userDto.getJobTitleEn());
+                user.setJobTitleKz(userDto.getJobTitleKz());
+                user.setJobTitleRu(userDto.getJobTitleRu());
+                user.setLastLogin(LocalDateTime.now());
+                user.setRoleId(userDto.getRoleId());
+                return userRepository.save(user);
+            }
+            return user;
         } else {
             User newUser = User.builder()
                     .uid(userDto.getUid())
