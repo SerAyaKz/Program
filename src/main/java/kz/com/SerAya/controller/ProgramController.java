@@ -65,4 +65,13 @@ public class ProgramController {
     ) {
         return ResponseEntity.ok(programService.findProgramDataById(id));
     }
+
+    @RequestMapping(value="/program/generate/{id}", method=RequestMethod.POST, headers = "Accept=application/json")
+    public ResponseEntity<Void> generateGoal(
+            @PathVariable("id") Integer id
+    ) {
+        programService.generate(id);
+        return ResponseEntity.accepted().build();
+    }
+
 }

@@ -83,8 +83,7 @@ public class SecurityConfig {
                                                 "/api/owner/**",
                                                 "/api/join-requests/**/approve",
                                                 "/api/join-requests/**/reject",
-                                                "/api/join-requests/**/**",
-                                                "/api/join-requests/**"
+                                                "/program/generate/**"
 
 
 

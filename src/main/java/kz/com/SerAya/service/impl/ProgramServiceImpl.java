@@ -1,5 +1,9 @@
 package kz.com.SerAya.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import kz.com.SerAya.dto.ProgramDataDto;
 import kz.com.SerAya.dto.ProgramDto;
 import kz.com.SerAya.dto.SectionDto;
@@ -8,16 +12,17 @@ import kz.com.SerAya.repository.*;
 import kz.com.SerAya.service.ProgramService;
 import kz.com.SerAya.service.SectionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 import javax.persistence.EntityNotFoundException;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,6 +35,7 @@ public class ProgramServiceImpl implements ProgramService {
     private final CourseProgramRepository courseProgramRepository;
     private final JobRepository jobRepository;
     private final StandardRepository standardRepository;
+    private final RestTemplate restTemplate;
 
     @Override
     public Integer save(ProgramDto dto) {
@@ -238,6 +244,94 @@ public class ProgramServiceImpl implements ProgramService {
                 outcomes,
                 courses
         );
+    }
+
+    public void generate(Integer programId) {
+        Program program = repository.findById(programId).orElseThrow(EntityNotFoundException::new);
+
+        String baseUrl = "https://fralet-flask4platform.hf.space/gradio_api/call/generate_goals";
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // --- Step 1: POST to start the job ---
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("data", List.of(program.getCodeName()));
+
+        String jsonRequestBody;
+        try {
+            jsonRequestBody = objectMapper.writeValueAsString(requestBody);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        HttpEntity<String> postEntity = new HttpEntity<>(jsonRequestBody, headers);
+        ResponseEntity<String> postResponse;
+        try {
+            postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, postEntity, String.class);
+        } catch (RestClientException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        String eventId;
+        try {
+            JsonNode postJson = objectMapper.readTree(postResponse.getBody());
+            eventId = postJson.get("event_id").asText();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+        System.out.println(eventId);
+
+        // --- Step 2: GET the result using the event_id ---
+        String getUrl = baseUrl + "/" + eventId;
+        String rawResult;
+        try {
+            ResponseEntity<String> getResponse = restTemplate.exchange(getUrl, HttpMethod.GET, new HttpEntity<>(headers), String.class);
+            rawResult = getResponse.getBody();
+        } catch (RestClientException e) {
+            e.printStackTrace();
+            return;
+        }
+        System.out.println(rawResult);
+
+        if (rawResult == null || rawResult.isBlank()) {
+            System.out.println("Empty response from generate_goals");
+            return;
+        }
+
+        // Gradio's GET endpoint streams SSE-style lines like:
+        // event: complete
+        // data: ["..."]
+        // Extract the last "data:" line's JSON payload.
+        String jsonData = null;
+        for (String line : rawResult.split("\n")) {
+            if (line.startsWith("data:")) {
+                jsonData = line.substring("data:".length()).trim();
+            }
+        }
+        System.out.println("jsonData" + jsonData);
+        if (jsonData == null) {
+            // Fallback: maybe the body was already plain JSON (no SSE wrapper)
+            jsonData = rawResult.trim();
+        }
+
+        String eduGoal;
+        try {
+            JsonNode dataArray = objectMapper.readTree(jsonData);
+            eduGoal = dataArray.get(0).asText();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+
+        program.setEduGoalEn(eduGoal);
+        repository.save(program); // if you need to persist the change
+
+//        System.out.println(eduGoal);
     }
 
 //    @Override

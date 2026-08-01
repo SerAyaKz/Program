@@ -13,4 +13,6 @@ public interface ProgramService extends AbstractService<ProgramDto> {
     Map<String, Object> getDashboardData();
 
     ProgramDataDto findProgramDataById(Integer id);
+
+    void generate(Integer id);
 }
