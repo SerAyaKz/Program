@@ -1,5 +1,6 @@
 package kz.com.SerAya.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import kz.com.SerAya.entity.LearningOutcome;
 import kz.com.SerAya.entity.Program;
 import lombok.AllArgsConstructor;

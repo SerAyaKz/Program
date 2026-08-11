@@ -28,19 +28,19 @@ public class Job {
     @Column(name = "descriptionEn")
     private String descriptionEn;
 
-    @JsonProperty("job_title")
+    @JsonProperty("job_title_ru")
     @Column(name = "nameRu")
     private String nameRu;
 
-    @JsonProperty("job_description")
+    @JsonProperty("job_description_ru")
     @Column(name = "descriptionRu")
     private String descriptionRu;
 
-    @JsonProperty("job_title")
+    @JsonProperty("job_title_kz")
     @Column(name = "nameKz")
     private String nameKz;
 
-    @JsonProperty("job_description")
+    @JsonProperty("job_description_kz")
     @Column(name = "descriptionKz")
     private String descriptionKz;
 

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Integer> {
@@ -25,4 +26,6 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
                     "\t\t\t\t\tselect user_id from user_programs where program_id=?1 )",
             nativeQuery = true)
     List<Course> findAllProgramByUser(int id);
+
+    Optional<Course> findByNameEnIgnoreCase(String courseName);
 }

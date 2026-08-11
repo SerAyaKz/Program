@@ -22,8 +22,7 @@ public class RecommendationServiceImpl implements RecommendationService {
 
     @Override
     public Integer save(RecommendationDto dto) {
-        System.out.println(dto.getProgram_id());
-        System.out.println(dto.getId());
+
 
         Program program = programRepository.findById(dto.getProgram_id()).orElseThrow(EntityNotFoundException::new);
         Recommendation recommendation = RecommendationDto.toEntity(dto,program);

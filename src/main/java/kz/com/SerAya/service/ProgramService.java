@@ -14,5 +14,18 @@ public interface ProgramService extends AbstractService<ProgramDto> {
 
     ProgramDataDto findProgramDataById(Integer id);
 
-    void generate(Integer id);
+    void generateRecommendation(Integer id);
+
+    void generateGoal(Integer id);
+
+    void generateStandard(Integer id);
+
+    void generateCourseDescription(Integer id);
+
+    void generateJob(Integer id);
+
+    void generateOutcome(Integer id);
+
+    void generateCourseProgram(Integer id);
+
 }

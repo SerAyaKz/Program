@@ -66,11 +66,59 @@ public class ProgramController {
         return ResponseEntity.ok(programService.findProgramDataById(id));
     }
 
-    @RequestMapping(value="/program/generate/{id}", method=RequestMethod.POST, headers = "Accept=application/json")
+    @RequestMapping(value="/program/generate/goal/{id}", method=RequestMethod.POST, headers = "Accept=application/json")
     public ResponseEntity<Void> generateGoal(
             @PathVariable("id") Integer id
     ) {
-        programService.generate(id);
+        programService.generateGoal(id);
+        return ResponseEntity.accepted().build();
+    }
+
+    @RequestMapping(value="/program/generate/recommendation/{id}", method=RequestMethod.POST, headers = "Accept=application/json")
+    public ResponseEntity<Void> generateRecommendation(
+            @PathVariable("id") Integer id
+    ) {
+        programService.generateRecommendation(id);
+        return ResponseEntity.accepted().build();
+    }
+
+    @RequestMapping(value="/program/generate/standard/{id}", method=RequestMethod.POST, headers = "Accept=application/json")
+    public ResponseEntity<Void> generateStandard(
+            @PathVariable("id") Integer id
+    ) {
+        programService.generateStandard(id);
+        return ResponseEntity.accepted().build();
+    }
+
+    @RequestMapping(value="/program/generate/job/{id}", method=RequestMethod.POST, headers = "Accept=application/json")
+    public ResponseEntity<Void> generateJob(
+            @PathVariable("id") Integer id
+    ) {
+        programService.generateJob(id);
+        return ResponseEntity.accepted().build();
+    }
+
+    @RequestMapping(value="/program/generate/course_description/{id}", method=RequestMethod.POST, headers = "Accept=application/json")
+    public ResponseEntity<Void> generateCourseDescription(
+            @PathVariable("id") Integer id
+    ) {
+        programService.generateCourseDescription(id);
+        return ResponseEntity.accepted().build();
+    }
+
+    @RequestMapping(value="/program/generate/outcome/{id}", method=RequestMethod.POST, headers = "Accept=application/json")
+    public ResponseEntity<Void> generateOutcome(
+            @PathVariable("id") Integer id
+    ) {
+        programService.generateOutcome(id);
+        return ResponseEntity.accepted().build();
+    }
+
+    @RequestMapping(value="/program/generate/courseProgram/{id}", method=RequestMethod.POST, headers = "Accept=application/json")
+    public ResponseEntity<Void> generateCourseProgram(
+            @PathVariable("id") Integer id
+    ) {
+        programService.generateCourseProgram(id);
         return ResponseEntity.accepted().build();
     }
 

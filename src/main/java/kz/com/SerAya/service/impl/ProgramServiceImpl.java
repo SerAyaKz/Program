@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kz.com.SerAya.dto.LearningOutcomeDto;
 import kz.com.SerAya.dto.ProgramDataDto;
 import kz.com.SerAya.dto.ProgramDto;
 import kz.com.SerAya.dto.SectionDto;
@@ -12,6 +13,7 @@ import kz.com.SerAya.repository.*;
 import kz.com.SerAya.service.ProgramService;
 import kz.com.SerAya.service.SectionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,7 +38,14 @@ public class ProgramServiceImpl implements ProgramService {
     private final CourseProgramRepository courseProgramRepository;
     private final JobRepository jobRepository;
     private final StandardRepository standardRepository;
+    private final RecommendationRepository recommendationRepository;
+    private final ProgramStandardRepository programStandardRepository;
+    private final CourseRepository courseRepository;
+    private final ProgramJobRepository programJobRepository;
+    private final CourseUserRepository courseUserRepository;
+
     private final RestTemplate restTemplate;
+    private final UserRepository userRepository;
 
     @Override
     public Integer save(ProgramDto dto) {
@@ -246,18 +256,144 @@ public class ProgramServiceImpl implements ProgramService {
         );
     }
 
-    public void generate(Integer programId) {
+    @Override
+    public void generateRecommendation(Integer id) {
+
+    }
+
+//    public void generateGoal(Integer programId) {
+//        String flaskUrl = "http://127.0.0.1:5000/goal";
+//        Program program = repository.findById(programId).orElseThrow(EntityNotFoundException::new);
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_JSON);
+//
+//        // Create a description JSON object
+//        Map<String, String> requestBody = new HashMap<>();
+//        requestBody.put("program", program.getCodeName());
+//
+//        // Convert to JSON string
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        String jsonRequestBody;
+//        try {
+//            jsonRequestBody = objectMapper.writeValueAsString(requestBody);
+//        } catch (JsonProcessingException e) {
+//            e.printStackTrace();
+//            return; // Handle JSON processing error
+//        }
+//
+//        HttpEntity<String> requestEntity = new HttpEntity<>(jsonRequestBody, headers);
+//
+//        // Capture the response as String
+//        ResponseEntity<String> response = restTemplate.exchange(flaskUrl, HttpMethod.POST, requestEntity, String.class);
+//        program.setEduGoalEn(response.getBody());
+//        System.out.println(response.getBody());
+//
+//
+//    }
+//public void generateGoal(Integer programId) {
+//    Program program = repository.findById(programId).orElseThrow(EntityNotFoundException::new);
+//
+//    String baseUrl = "https://fralet-flask4platform.hf.space/gradio_api/call/generate_goals";
+//
+//    ObjectMapper objectMapper = new ObjectMapper();
+//    HttpHeaders headers = new HttpHeaders();
+//    headers.setContentType(MediaType.APPLICATION_JSON);
+//
+//    // --- Step 1: POST to start the job ---
+//    Map<String, Object> requestBody = new HashMap<>();
+//    requestBody.put("data", List.of(program.getCodeName()));
+//
+//    String jsonRequestBody;
+//    try {
+//        jsonRequestBody = objectMapper.writeValueAsString(requestBody);
+//    } catch (JsonProcessingException e) {
+//        e.printStackTrace();
+//        return;
+//    }
+//
+//    HttpEntity<String> postEntity = new HttpEntity<>(jsonRequestBody, headers);
+//    ResponseEntity<String> postResponse;
+//    try {
+//        postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, postEntity, String.class);
+//    } catch (RestClientException e) {
+//        e.printStackTrace();
+//        return;
+//    }
+//
+//    String eventId;
+//    try {
+//        JsonNode postJson = objectMapper.readTree(postResponse.getBody());
+//        eventId = postJson.get("event_id").asText();
+//    } catch (Exception e) {
+//        e.printStackTrace();
+//        return;
+//    }
+//    System.out.println(eventId);
+//
+//    // --- Step 2: GET the result using the event_id ---
+//    String getUrl = baseUrl + "/" + eventId;
+//    String rawResult;
+//    try {
+//        ResponseEntity<String> getResponse = restTemplate.exchange(getUrl, HttpMethod.GET, new HttpEntity<>(headers), String.class);
+//        rawResult = getResponse.getBody();
+//    } catch (RestClientException e) {
+//        e.printStackTrace();
+//        return;
+//    }
+//    System.out.println(rawResult);
+//
+//    if (rawResult == null || rawResult.isBlank()) {
+//        System.out.println("Empty response from generate_goals");
+//        return;
+//    }
+//
+//    // Gradio's GET endpoint streams SSE-style lines like:
+//    // event: complete
+//    // data: ["..."]
+//    // Extract the last "data:" line's JSON payload.
+//    String jsonData = null;
+//    for (String line : rawResult.split("\n")) {
+//        if (line.startsWith("data:")) {
+//            jsonData = line.substring("data:".length()).trim();
+//        }
+//    }
+//    System.out.println("jsonData" + jsonData);
+//    if (jsonData == null) {
+//        // Fallback: maybe the body was already plain JSON (no SSE wrapper)
+//        jsonData = rawResult.trim();
+//    }
+//
+//    String eduGoal;
+//    try {
+//        JsonNode dataArray = objectMapper.readTree(jsonData);
+//        eduGoal = dataArray.get(0).asText();
+//    } catch (Exception e) {
+//        e.printStackTrace();
+//        return;
+//    }
+//
+//    program.setEduGoalEn(eduGoal);
+//    repository.save(program); // if you need to persist the change
+//
+////        System.out.println(eduGoal);
+//}
+
+    public void generateGoal(Integer programId) {
         Program program = repository.findById(programId).orElseThrow(EntityNotFoundException::new);
 
-        String baseUrl = "https://fralet-flask4platform.hf.space/gradio_api/call/generate_goals";
+        String baseUrl = "https://showpiece-edging-landscape.ngrok-free.dev/goal";
 
         ObjectMapper objectMapper = new ObjectMapper();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        // --- Step 1: POST to start the job ---
+        String input = program.getCodeName();
+
         Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("data", List.of(program.getCodeName()));
+        requestBody.put("program", List.of(input));
+        requestBody.put("token", 500);
+        requestBody.put("lang", "en");
 
         String jsonRequestBody;
         try {
@@ -276,78 +412,308 @@ public class ProgramServiceImpl implements ProgramService {
             return;
         }
 
-        String eventId;
+        System.out.println(postResponse.getBody());
+
+        program.setEduGoalEn(postResponse.getBody());
+        repository.save(program);
+    }
+
+    @Override
+    public void generateStandard(Integer programId) {
+        Program program = repository.findById(programId).orElseThrow(EntityNotFoundException::new);
+
+        String baseUrl = "https://showpiece-edging-landscape.ngrok-free.dev/standards";
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        String input = program.getCodeName();
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("program", List.of(input));
+        requestBody.put("token", 500);
+        requestBody.put("lang", "en");
+
+        String jsonRequestBody;
         try {
-            JsonNode postJson = objectMapper.readTree(postResponse.getBody());
-            eventId = postJson.get("event_id").asText();
-        } catch (Exception e) {
+            jsonRequestBody = objectMapper.writeValueAsString(requestBody);
+        } catch (JsonProcessingException e) {
             e.printStackTrace();
             return;
         }
-        System.out.println(eventId);
 
-        // --- Step 2: GET the result using the event_id ---
-        String getUrl = baseUrl + "/" + eventId;
-        String rawResult;
+        HttpEntity<String> postEntity = new HttpEntity<>(jsonRequestBody, headers);
+        ResponseEntity<List<Standard>> postResponse;
         try {
-            ResponseEntity<String> getResponse = restTemplate.exchange(getUrl, HttpMethod.GET, new HttpEntity<>(headers), String.class);
-            rawResult = getResponse.getBody();
+            postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, postEntity, new ParameterizedTypeReference<List<Standard>>() {});
         } catch (RestClientException e) {
             e.printStackTrace();
             return;
         }
-        System.out.println(rawResult);
+        List<Standard> standards = postResponse.getBody();
 
-        if (rawResult == null || rawResult.isBlank()) {
-            System.out.println("Empty response from generate_goals");
+        if (standards == null || standards.isEmpty()) {
             return;
         }
+        for (Standard apiStandard : standards) {
 
-        // Gradio's GET endpoint streams SSE-style lines like:
-        // event: complete
-        // data: ["..."]
-        // Extract the last "data:" line's JSON payload.
-        String jsonData = null;
-        for (String line : rawResult.split("\n")) {
-            if (line.startsWith("data:")) {
-                jsonData = line.substring("data:".length()).trim();
-            }
-        }
-        System.out.println("jsonData" + jsonData);
-        if (jsonData == null) {
-            // Fallback: maybe the body was already plain JSON (no SSE wrapper)
-            jsonData = rawResult.trim();
-        }
+            Standard standard = new Standard();
 
-        String eduGoal;
+            standard.setNameEn(apiStandard.getNameEn());
+
+
+            Standard savedStandard = standardRepository.save(standard);
+
+            programStandardRepository.addStandardToProgram(programId, savedStandard.getId());
+
+
+        }
+    }
+    @Override
+    public void generateJob(Integer programId) {
+        Program program = repository.findById(programId).orElseThrow(EntityNotFoundException::new);
+
+        String baseUrl = "https://showpiece-edging-landscape.ngrok-free.dev/jobs";
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        String input = program.getCodeName();
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("program", List.of(input));
+        requestBody.put("token", 500);
+        requestBody.put("lang", "en");
+
+        String jsonRequestBody;
         try {
-            JsonNode dataArray = objectMapper.readTree(jsonData);
-            eduGoal = dataArray.get(0).asText();
-        } catch (Exception e) {
+            jsonRequestBody = objectMapper.writeValueAsString(requestBody);
+        } catch (JsonProcessingException e) {
             e.printStackTrace();
             return;
         }
 
-        program.setEduGoalEn(eduGoal);
-        repository.save(program); // if you need to persist the change
+        HttpEntity<String> postEntity = new HttpEntity<>(jsonRequestBody, headers);
+        ResponseEntity<List<Job>> postResponse;
+        try {
+            postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, postEntity, new ParameterizedTypeReference<List<Job>>() {});
+        } catch (RestClientException e) {
+            e.printStackTrace();
+            return;
+        }
+        List<Job> jobs = postResponse.getBody();
 
-//        System.out.println(eduGoal);
+        if (jobs == null || jobs.isEmpty()) {
+            return;
+        }
+        for (Job apiJob : jobs) {
+
+            Job job = new Job();
+
+            job.setNameEn(apiJob.getNameEn());
+            job.setDescriptionEn(apiJob.getDescriptionEn());
+            job.setJob_type(apiJob.getJob_type());
+
+            Job savedJob = jobRepository.save(job);
+            programJobRepository.addJobToProgram(programId, savedJob.getId());
+
+        }
     }
 
-//    @Override
-//    public List<ProgramUserDto> findProgramUserByUserId(Integer id) {
-//        Program program = repository.findById(id).orElseThrow();
-//
-//        List<User> users = courseProgramRepository.findCourseProgramsByProgram(id);
-//
-//        return ProgramDataDto.fromEntity(
-//                program,
-//                jobs,
-//                standards,
-//                outcomes,
-//                courses
-//        );
-//    }
+    @Override
+    public void generateOutcome(Integer programId) {
+        Program program = repository.findById(programId).orElseThrow(EntityNotFoundException::new);
+
+        String baseUrl = "https://showpiece-edging-landscape.ngrok-free.dev/learning_outcomes";
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        String input = program.getCodeName() +". "+program.getEduGoalEn();
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("program", List.of(input));
+        requestBody.put("token", 3500);
+        requestBody.put("lang", "en");
+
+        String jsonRequestBody;
+        try {
+            jsonRequestBody = objectMapper.writeValueAsString(requestBody);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        HttpEntity<String> postEntity = new HttpEntity<>(jsonRequestBody, headers);
+        ResponseEntity<String> postResponse;
+        try {
+            postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, postEntity, String.class);
+        } catch (RestClientException e) {
+            e.printStackTrace();
+            return;
+        }
+        try {
+
+            List<LearningOutcome> outcomes =
+                    objectMapper.readValue(
+                            postResponse.getBody(),
+                            new TypeReference<List<LearningOutcome>>() {}
+                    );
+            AtomicInteger counter = new AtomicInteger(1);
+            List<LearningOutcome> entities = outcomes.stream()
+                    .map(outcome -> {
+                        LearningOutcome entity = new LearningOutcome();
+                        entity.setCode("N" + counter.getAndIncrement());
+                        entity.setLearningOutcomeEn(
+                                outcome.getLearningOutcomeEn()
+                        );
+
+                        entity.setProgram(program);
+                        learningOutcomeRepository.save(entity);
+
+                        return entity;
+                    })
+                    .toList();
+
+
+
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void generateCourseDescription(Integer courseId) {
+        Course course = courseRepository.findById(courseId).orElseThrow(EntityNotFoundException::new);
+
+        String baseUrl = "https://showpiece-edging-landscape.ngrok-free.dev/course_description";
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        String input = course.getNameEn();
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("program", List.of(input));
+        requestBody.put("token", 1000);
+        requestBody.put("lang", "en");
+
+        String jsonRequestBody;
+        try {
+            jsonRequestBody = objectMapper.writeValueAsString(requestBody);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        HttpEntity<String> postEntity = new HttpEntity<>(jsonRequestBody, headers);
+        ResponseEntity<String> postResponse;
+        try {
+            postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, postEntity, String.class);
+        } catch (RestClientException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        System.out.println(postResponse.getBody());
+
+        course.setBriefInfoEn(postResponse.getBody());
+        courseRepository.save(course);
+    }
+
+    public void generateCourseProgram(Integer programId) {
+        Program program = repository.findById(programId).orElseThrow(EntityNotFoundException::new);
+        Integer user_id = repository.findOwnerByProgramId(programId);
+        User user= userRepository.findById(user_id).orElseThrow(EntityNotFoundException::new);
+
+        String baseUrl = "https://showpiece-edging-landscape.ngrok-free.dev/courseProgram";
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        String input = program.getCodeName();
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("program", List.of(input));
+        requestBody.put("token", 400);
+        requestBody.put("lang", "en");
+
+        String jsonRequestBody;
+        try {
+            jsonRequestBody = objectMapper.writeValueAsString(requestBody);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        HttpEntity<String> postEntity = new HttpEntity<>(jsonRequestBody, headers);
+        ResponseEntity<String> postResponse;
+        try {
+            postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, postEntity, String.class);
+        } catch (RestClientException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        String response = postResponse.getBody();
+
+        if (response == null || response.isBlank()) {
+            return;
+        }
+
+        // Remove [ and ]
+        response = response.trim();
+
+        if (response.startsWith("[") && response.endsWith("]")) {
+            response = response.substring(1, response.length() - 1);
+        }
+
+        // Split courses by ;
+        List<String> courseNames = Arrays.stream(response.split(";"))
+                .map(String::trim)
+                .filter(name -> !name.isBlank())
+                .distinct()
+                .toList();
+
+        List<CourseProgram> coursePrograms = new ArrayList<>();
+
+        for (String courseName : courseNames) {
+
+            // Find existing course or create new one
+            Course course = courseRepository
+                    .findByNameEnIgnoreCase(courseName)
+                    .orElseGet(() -> {
+                        Course newCourse = new Course();
+                        newCourse.setNameEn(courseName);
+                        newCourse.setSelective(false);
+
+                        return courseRepository.save(newCourse);
+                    });
+
+            CourseProgram courseProgram = new CourseProgram();
+
+            courseProgram.setProgram(program);
+            courseProgram.setCourse(course);
+
+            courseProgram.setYear(1);
+            courseProgram.setTerm(1);
+            courseProgram.setCreditCount(5);
+
+            coursePrograms.add(courseProgram);
+
+            CourseUser courseUser = new CourseUser();
+            courseUser.setUser(user);
+            courseUser.setCourse(course);
+            courseUser.setAssignedAt(LocalDateTime.now());
+            courseUserRepository.save(courseUser);
+        }
+
+        courseProgramRepository.saveAll(coursePrograms);
+    }
 
     /**
      * Retrieves dashboard data for a specific program

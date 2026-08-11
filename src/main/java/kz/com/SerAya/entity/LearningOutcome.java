@@ -1,6 +1,8 @@
 package kz.com.SerAya.entity;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,16 +20,17 @@ public class LearningOutcome {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "code", nullable = false)
+    @Column(name = "code")
     private String code;
 
-    @Column(name = "learningOutcomeKz", nullable = false, length = 500)
+    @Column(name = "learningOutcomeKz",  length = 500)
     private String learningOutcomeKz;
 
-    @Column(name = "learningOutcomeRu", nullable = false, length = 500)
+    @Column(name = "learningOutcomeRu", length = 500)
     private String learningOutcomeRu;
 
-    @Column(name = "learningOutcomeEn", nullable = false, length = 500)
+    @JsonProperty("learningOutcomeNameEn")
+    @Column(name = "learningOutcomeEn", length = 500)
     private String learningOutcomeEn;
 
     @ManyToOne

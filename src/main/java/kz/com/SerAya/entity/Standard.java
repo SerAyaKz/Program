@@ -1,5 +1,6 @@
 package kz.com.SerAya.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,13 +20,14 @@ public class Standard{
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "nameKz", nullable = false)
+    @Column(name = "nameKz")
     private String nameKz;
 
-    @Column(name = "nameRu", nullable = false)
+    @Column(name = "nameRu")
     private String nameRu;
 
-    @Column(name = "nameEn", nullable = false)
+    @JsonProperty("name_en")
+    @Column(name = "nameEn")
     private String nameEn;
 
 }

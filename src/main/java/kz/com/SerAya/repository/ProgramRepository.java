@@ -2,10 +2,12 @@ package kz.com.SerAya.repository;
 
 import kz.com.SerAya.entity.Program;
 import kz.com.SerAya.entity.Program;
+import kz.com.SerAya.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProgramRepository extends JpaRepository<Program, Integer> {
     @Query(
@@ -23,6 +25,19 @@ public interface ProgramRepository extends JpaRepository<Program, Integer> {
                     ")",
             nativeQuery = true)
     List<Program> findAllByUser(int id);
+
+    @Query(
+            value = """
+
+                    SELECT up.user_id
+                   FROM user_programs up
+                   WHERE up.program_id = ?1
+                   ORDER BY up.joined_date ASC
+                   LIMIT 1
+        """,
+            nativeQuery = true
+    )
+    Integer findOwnerByProgramId(int programId);
 
     @Query(value = "SELECT academic_degree, COUNT(*) as count FROM programs GROUP BY academic_degree", nativeQuery = true)
     List<Object[]> countProgramsByAcademicDegree();
