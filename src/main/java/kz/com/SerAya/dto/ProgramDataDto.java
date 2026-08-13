@@ -8,6 +8,9 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -30,9 +33,14 @@ public class ProgramDataDto {
             List<Job> jobs,
             List<Standard> standards,
             List<LearningOutcome> outcomes,
-            List<CourseProgram> courses
+            List<CourseProgram> courses,
+            List<CourseLearningOutcome> courseLearningOutcomes
     ) {
-
+        Map<Integer, Set<String>> loCodesByCourseId = courseLearningOutcomes.stream()
+                .collect(Collectors.groupingBy(
+                        clo -> clo.getCourse().getId(),
+                        Collectors.mapping(clo -> clo.getLearningOutcome().getCode(), Collectors.toSet())
+                ));
         return ProgramDataDto.builder()
                 .program(ProgramDto.fromEntity(program))
                 .jobs(jobs.stream()
@@ -45,7 +53,7 @@ public class ProgramDataDto {
                         .map(LearningOutcomeDto::fromEntity)
                         .toList())
                 .courses(courses.stream()
-                        .map(CourseProgramDto::fromEntity)
+                        .map(cp -> CourseProgramDto.fromEntity(cp, loCodesByCourseId))
                         .toList())
                 .build();
     }

@@ -38,8 +38,7 @@ public class RecommendationController {
     public ResponseEntity<Integer> save(
             @RequestBody RecommendationDto recommendation
     ) {
-        System.out.println(recommendation.getProgram_id());
-        System.out.println(recommendation.getId());
+
         return ResponseEntity.ok(recommendationService.save(recommendation));
     }
 }

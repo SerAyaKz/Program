@@ -33,12 +33,11 @@ public class Skill  {
     @CreatedDate
     @Column(
             name = "createdDate",
-            nullable = false,
             updatable = false
     )
     private LocalDateTime createdDate;
 
     @ManyToOne
-    @JoinColumn(name = "job_id", referencedColumnName = "id", nullable = false)
-    private Job job;
+    @JoinColumn(name = "program_id", referencedColumnName = "id", nullable = false)
+    private Program program;
 }

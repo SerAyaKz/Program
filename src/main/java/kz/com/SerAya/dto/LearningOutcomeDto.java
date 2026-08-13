@@ -6,6 +6,7 @@ import kz.com.SerAya.entity.Program;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @Data
@@ -19,6 +20,11 @@ public class LearningOutcomeDto {
     private String learningOutcomeRu;
     private String learningOutcomeEn;
     private Integer programId;
+
+    public LearningOutcomeDto(String learningOutcomeEn, String code) {
+        this.learningOutcomeEn = learningOutcomeEn;
+        this.code = code;
+    }
 
     public static LearningOutcomeDto fromEntity(LearningOutcome learningOutcome) {
         if (learningOutcome == null) {

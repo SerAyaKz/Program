@@ -14,4 +14,9 @@ public interface SkillRepository extends JpaRepository<Skill, Integer> {
             value = " SELECT * from skill where job_id =?",
             nativeQuery = true)
     Skill findAllByJob_Id(int id);
+
+    List<Skill> findByProgramIdOrderByYearRangeDescFreqDesc(Integer programId);
+    void deleteByProgramId(Integer programId);
+
+    List<Skill> findByProgram_Id(Integer programId);
 }

@@ -37,13 +37,13 @@ public class JobController {
         jobService.generate(id);
         return ResponseEntity.accepted().build();
     }
-    @RequestMapping(value="/job/skills/generate/{id}",method=RequestMethod.POST, headers = "Accept=application/json")
-    public ResponseEntity<Void> collectSkills(
-            @PathVariable("id") Integer id
-    ) {
-        jobService.collectSkills(id);
-        return ResponseEntity.accepted().build();
-    }
+//    @RequestMapping(value="/job/skills/generate/{id}",method=RequestMethod.POST, headers = "Accept=application/json")
+//    public ResponseEntity<Void> collectSkills(
+//            @PathVariable("id") Integer id
+//    ) {
+//        jobService.collectSkills(id);
+//        return ResponseEntity.accepted().build();
+//    }
     @RequestMapping(value = "/job/{id}", method = RequestMethod.DELETE, headers = "Accept=application/json")
     public ResponseEntity<Void> delete(
             @PathVariable("id") Integer id

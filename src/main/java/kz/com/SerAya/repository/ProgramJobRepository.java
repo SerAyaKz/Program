@@ -20,4 +20,8 @@ public interface ProgramJobRepository extends JpaRepository<Program, Integer> {
     @Modifying
     @Query(value = "DELETE FROM program_job WHERE job_id = :jobId", nativeQuery = true)
     void removeJobFromProgram( Integer jobId);
+    @Transactional
+    @Modifying
+    @Query(value = "DELETE FROM program_job WHERE program_id = :id", nativeQuery = true)
+    void deleteAllByProgram_Id(Integer id);
 }

@@ -4,16 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kz.com.SerAya.dto.LearningOutcomeDto;
-import kz.com.SerAya.dto.ProgramDataDto;
-import kz.com.SerAya.dto.ProgramDto;
-import kz.com.SerAya.dto.SectionDto;
+import kz.com.SerAya.dto.*;
 import kz.com.SerAya.entity.*;
 import kz.com.SerAya.repository.*;
 import kz.com.SerAya.service.ProgramService;
 import kz.com.SerAya.service.SectionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,10 +21,13 @@ import org.springframework.web.client.RestTemplate;
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +44,8 @@ public class ProgramServiceImpl implements ProgramService {
     private final CourseRepository courseRepository;
     private final ProgramJobRepository programJobRepository;
     private final CourseUserRepository courseUserRepository;
+    private final CourseLearningOutcomeRepository courseLearningOutcomeRepository;
+    private final SkillRepository skillRepository;
 
     private final RestTemplate restTemplate;
     private final UserRepository userRepository;
@@ -63,7 +66,7 @@ public class ProgramServiceImpl implements ProgramService {
         return repository.findAll()
                 .stream()
                 .map(ProgramDto::fromEntity)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     @Override
@@ -87,6 +90,11 @@ public class ProgramServiceImpl implements ProgramService {
         learningOutcomeRepository.deleteByProgram(id);
         sectionRepository.deleteAllByProgram(id);
         courseProgramRepository.deleteByProgram(id);
+//        jobRepository.deleteAllByP standard
+        recommendationRepository.deleteAllByProgram_Id(id);
+        programJobRepository.deleteAllByProgram_Id(id);
+        programStandardRepository.deleteAllByProgram_Id(id);
+
         repository.deleteById(id);
     }
 
@@ -247,19 +255,19 @@ public class ProgramServiceImpl implements ProgramService {
         List<LearningOutcome> outcomes = learningOutcomeRepository.findLearningOutcomesByProgram(id);
         List<CourseProgram> courses = courseProgramRepository.findCourseProgramsByProgram(id);
 
+        List<CourseLearningOutcome> courseLearningOutcomes =
+                courseLearningOutcomeRepository.findByProgram_Id(id);
         return ProgramDataDto.fromEntity(
                 program,
                 jobs,
                 standards,
                 outcomes,
-                courses
+                courses,
+                courseLearningOutcomes
         );
     }
 
-    @Override
-    public void generateRecommendation(Integer id) {
 
-    }
 
 //    public void generateGoal(Integer programId) {
 //        String flaskUrl = "http://127.0.0.1:5000/goal";
@@ -680,6 +688,7 @@ public class ProgramServiceImpl implements ProgramService {
                 .toList();
 
         List<CourseProgram> coursePrograms = new ArrayList<>();
+        AtomicInteger counter = new AtomicInteger(1);
 
         for (String courseName : courseNames) {
 
@@ -688,6 +697,7 @@ public class ProgramServiceImpl implements ProgramService {
                     .findByNameEnIgnoreCase(courseName)
                     .orElseGet(() -> {
                         Course newCourse = new Course();
+                        newCourse.setCode("N" + counter.getAndIncrement());
                         newCourse.setNameEn(courseName);
                         newCourse.setSelective(false);
 
@@ -705,16 +715,252 @@ public class ProgramServiceImpl implements ProgramService {
 
             coursePrograms.add(courseProgram);
 
-            CourseUser courseUser = new CourseUser();
-            courseUser.setUser(user);
-            courseUser.setCourse(course);
-            courseUser.setAssignedAt(LocalDateTime.now());
-            courseUserRepository.save(courseUser);
+            try {
+                CourseUser courseUser = new CourseUser();
+                courseUser.setUser(user);
+                courseUser.setCourse(course);
+                courseUser.setAssignedAt(LocalDateTime.now());
+
+                courseUserRepository.save(courseUser);
+
+            } catch (DataIntegrityViolationException e) {
+                // Already assigned, skip
+            }
         }
 
         courseProgramRepository.saveAll(coursePrograms);
     }
 
+    public void generateCourseMapping(Integer programId) {
+        Program program = repository.findById(programId).orElseThrow(EntityNotFoundException::new);
+        List<LearningOutcome> learningOutcomes = learningOutcomeRepository.findLearningOutcomesByProgram(programId);
+        List<Course> courses = courseRepository.findCourseByProgram(programId);
+
+        String baseUrl = "https://showpiece-edging-landscape.ngrok-free.dev/course_lo_mapping";
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        List<String> courseNames = courses.stream()
+                .map(Course::getNameEn)
+                .collect(Collectors.toList());
+
+        List<Map<String, String>> learningOutcomeInputs = learningOutcomes.stream()
+                .map(lo -> {
+                    Map<String, String> loMap = new LinkedHashMap<>();
+                    loMap.put("name", lo.getLearningOutcomeEn());
+                    loMap.put("code", lo.getCode());
+                    return loMap;
+                })
+                .collect(Collectors.toList());
+
+        Map<String, Object> programInput = new LinkedHashMap<>();
+        programInput.put("courses", courseNames);
+        programInput.put("learningOutcomes", learningOutcomeInputs);
+
+        String input;
+        try {
+            input = objectMapper.writeValueAsString(programInput);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return;
+        }
+
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("program", input);
+        requestBody.put("token", 3000);
+        requestBody.put("lang", "en");
+
+        String jsonRequestBody;
+        try {
+            jsonRequestBody = objectMapper.writeValueAsString(requestBody);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        HttpEntity<String> postEntity = new HttpEntity<>(jsonRequestBody, headers);
+        ResponseEntity<String> postResponse;
+        try {
+            postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, postEntity, String.class);
+        } catch (RestClientException e) {
+            e.printStackTrace();
+            return;
+        }
+        System.out.println(postResponse.getBody());
+
+        CourseOutcomeMappingResponse mappingResponse;
+        try {
+            mappingResponse = objectMapper.readValue(postResponse.getBody(), CourseOutcomeMappingResponse.class);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        // Lookup maps built from data already scoped to this program
+        Map<String, Course> courseByName = courses.stream()
+                .collect(Collectors.toMap(Course::getNameEn, c -> c, (a, b) -> a));
+        Map<String, LearningOutcome> loByCode = learningOutcomes.stream()
+                .collect(Collectors.toMap(LearningOutcome::getCode, lo -> lo, (a, b) -> a));
+
+        List<CourseLearningOutcome> toSave = new ArrayList<>();
+
+        for (CourseOutcomeMappingItem item : mappingResponse.getCourseOutcomeMapping()) {
+            Course course = courseByName.get(item.getNameEn());
+            if (course == null) {
+                System.out.println("No matching course found for: " + item.getNameEn());
+                continue;
+            }
+
+            for (String code : item.getLearningOutcomeCodes()) {
+                LearningOutcome lo = loByCode.get(code);
+                if (lo == null) {
+                    System.out.println("No matching learning outcome found for code: " + code);
+                    continue;
+                }
+
+                CourseLearningOutcome mapping = new CourseLearningOutcome();
+                mapping.setCourse(course);
+                mapping.setLearningOutcome(lo);
+                mapping.setProgram(program);
+                toSave.add(mapping);
+            }
+        }
+
+        courseLearningOutcomeRepository.saveAll(toSave);
+
+    }
+
+    public void generateSkill(Integer programId) {
+        Program program = repository.findById(programId).orElseThrow(EntityNotFoundException::new);
+        List<Job> job = jobRepository.findJobsByProgram(programId);
+        String baseUrl = "https://showpiece-edging-landscape.ngrok-free.dev/skill";
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        String input = job.stream()
+                .filter(j -> !"Atlas".equalsIgnoreCase(j.getJob_type()))
+                .map(Job::getNameEn)
+                .filter(Objects::nonNull)
+                .collect(Collectors.joining(", "));
+        System.out.println(input);
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("program", List.of(input));
+        requestBody.put("token", 1000);
+        requestBody.put("lang", "en");
+
+        String jsonRequestBody;
+        try {
+            jsonRequestBody = objectMapper.writeValueAsString(requestBody);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        HttpEntity<String> postEntity = new HttpEntity<>(jsonRequestBody, headers);
+        ResponseEntity<String> postResponse;
+        try {
+            postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, postEntity, String.class);
+        } catch (RestClientException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        System.out.println(postResponse.getBody());
+
+        int yearRange = java.time.Year.now().getValue(); // placeholder — adjust to your actual semantics
+
+        try {
+            JsonNode root = objectMapper.readTree(postResponse.getBody());
+            JsonNode skillsNode = root.get("skills");
+
+            List<Skill> skillsToSave = new ArrayList<>();
+            for (JsonNode skillNode : skillsNode) {
+                Skill skill = new Skill();
+                skill.setName(skillNode.get("preferredLabel").asText());
+                skill.setFreq(skillNode.get("count").asInt());
+                skill.setCreatedDate(LocalDateTime.now());
+                skill.setYearRange(yearRange);
+                skill.setProgram(program);
+                skillsToSave.add(skill);
+            }
+
+            // if this endpoint can be called repeatedly for the same program,
+            // decide whether to replace old rows first:
+            // skillRepository.deleteByProgramId(programId);
+
+            skillRepository.saveAll(skillsToSave);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void generateRecommendation(Integer programId) {
+        Program program = repository.findById(programId).orElseThrow(EntityNotFoundException::new);
+
+        String baseUrl = "https://showpiece-edging-landscape.ngrok-free.dev/recommendation";
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        List<Course> courses = courseRepository.findCourseByProgram(programId);
+        List<Skill> skills = skillRepository.findByProgram_Id(programId); // adjust to your actual repo method
+        List<LearningOutcome> outcomes = learningOutcomeRepository.findLearningOutcomesByProgram(programId);
+
+        String courseNames = courses.stream()
+                .map(Course::getNameEn)
+                .filter(Objects::nonNull)
+                .collect(Collectors.joining(", "));
+
+        String skillNames = skills.stream()
+                .map(Skill::getName)
+                .filter(Objects::nonNull)
+                .collect(Collectors.joining(", "));
+
+//        String outcomeTexts = outcomes.stream()
+//                .map(LearningOutcome::getLearningOutcomeEn)
+//                .filter(Objects::nonNull)
+//                .collect(Collectors.joining(", "));
+
+        String input = "Educational program: " + program.getCodeName() + ". "
+                + "Courses: " + courseNames + ". "
+                + "Skills: " + skillNames + ". "
+//                + "Learning outcomes: " + outcomeTexts
+                ;
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("program", List.of(input));
+        requestBody.put("token", 5000);
+        requestBody.put("lang", "en");
+
+        String jsonRequestBody;
+        try {
+            jsonRequestBody = objectMapper.writeValueAsString(requestBody);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        HttpEntity<String> postEntity = new HttpEntity<>(jsonRequestBody, headers);
+        ResponseEntity<String> postResponse;
+        try {
+            postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, postEntity, String.class);
+        } catch (RestClientException e) {
+            e.printStackTrace();
+            return;
+        }
+        Recommendation recommendation = new Recommendation();
+        recommendation.setProgram(program);
+        recommendation.setContent(postResponse.getBody());
+        recommendationRepository.save(recommendation);
+
+    }
     /**
      * Retrieves dashboard data for a specific program
      * @param programId The ID of the program

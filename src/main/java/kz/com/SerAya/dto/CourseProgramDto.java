@@ -9,6 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -23,9 +25,10 @@ public class CourseProgramDto {
     private Integer creditCount;
     private Integer programId;
     private CourseDto course;
-    private Set<Integer> learningOutcomeIds;
+    private Set<String> learningOutcomeCodes;
 
-    public static CourseProgramDto fromEntity(CourseProgram courseProgram) {
+    public static CourseProgramDto fromEntity(CourseProgram courseProgram, Map<Integer, Set<String>> loCodesByCourseId) {
+        Integer courseId = courseProgram.getCourse().getId();
         if (courseProgram == null) {
             return null;
         }
@@ -38,6 +41,7 @@ public class CourseProgramDto {
                 .course(courseProgram.getCourse() != null
                         ? CourseDto.fromEntity(courseProgram.getCourse())
                         : null)
+                .learningOutcomeCodes(loCodesByCourseId.getOrDefault(courseId, Collections.emptySet()))
                 .build();
     }
 

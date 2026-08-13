@@ -10,4 +10,8 @@ import java.util.List;
 
 public interface CourseProgramService extends AbstractService<CourseProgramDto> {
     List<CourseProgramDto> findCourseProgramsByProgram(Integer id);
+
+    void addLearningOutcomes(Integer courseId, Integer programId, List<String> learningOutcomeCodes);
+
+    void removeLearningOutcomes(Integer courseId, Integer programId, List<String> learningOutcomeCodes);
 }

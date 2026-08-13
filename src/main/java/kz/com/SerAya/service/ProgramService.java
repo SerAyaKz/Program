@@ -28,4 +28,8 @@ public interface ProgramService extends AbstractService<ProgramDto> {
 
     void generateCourseProgram(Integer id);
 
+    void generateCourseMapping(Integer id);
+
+    void generateSkill(Integer id);
+
 }

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -22,5 +23,7 @@ public interface LearningOutcomeRepository extends JpaRepository<LearningOutcome
     @Modifying
     @Query(value = "DELETE FROM learning_outcomes WHERE program_id = :id", nativeQuery = true)
     void deleteByProgram( Integer id);
+
+    List<LearningOutcome> findByProgram_IdAndCodeIn(Integer programId, Collection<String> codes);
 
 }

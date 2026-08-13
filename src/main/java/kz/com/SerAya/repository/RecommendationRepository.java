@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RecommendationRepository extends JpaRepository<Recommendation, Integer> {
+
+    void deleteAllByProgram_Id(Integer id);
 }

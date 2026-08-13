@@ -57,8 +57,8 @@ public class SecurityConfig {
                                                 "/skill/**",
                                                 "/skill",
                                                 "/generate_job_titles",
-                                                "/programs/job/collect_skills/**",
-                                                "/programs/job/generate/**",
+                                                "/skill/**",
+                                                "/skill/program/**",
                                                 "/course/**",
                                                 "/course",
                                                 "/programs/learningOutcome/**",
@@ -83,7 +83,8 @@ public class SecurityConfig {
                                                 "/api/owner/**",
                                                 "/api/join-requests/**/approve",
                                                 "/api/join-requests/**/reject",
-                                                "/program/generate/**/**"
+                                                "/program/generate/**/**",
+                                                "/courseLearningOutcome/**"
 
 
 

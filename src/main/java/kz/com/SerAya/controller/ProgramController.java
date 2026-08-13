@@ -122,4 +122,20 @@ public class ProgramController {
         return ResponseEntity.accepted().build();
     }
 
+    @RequestMapping(value="/program/generate/course_lo_mapping/{id}", method=RequestMethod.POST, headers = "Accept=application/json")
+    public ResponseEntity<Void> generateCourseMapping(
+            @PathVariable("id") Integer id
+    ) {
+        programService.generateCourseMapping(id);
+        return ResponseEntity.accepted().build();
+    }
+
+    @RequestMapping(value="/program/generate/skill/{id}", method=RequestMethod.POST, headers = "Accept=application/json")
+    public ResponseEntity<Void> generateSkill(
+            @PathVariable("id") Integer id
+    ) {
+        programService.generateSkill(id);
+        return ResponseEntity.accepted().build();
+    }
+
 }

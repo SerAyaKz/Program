@@ -27,5 +27,13 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
             nativeQuery = true)
     List<Course> findAllProgramByUser(int id);
 
+    @Query(
+            value = "SELECT course.* FROM course \n" +
+                    "inner join course_program \n" +
+                    "on course.id=course_program.course_id\n" +
+                    "WHERE course_program.program_id=?1",
+            nativeQuery = true)
+    List<Course> findCourseByProgram(int id);
+
     Optional<Course> findByNameEnIgnoreCase(String courseName);
 }

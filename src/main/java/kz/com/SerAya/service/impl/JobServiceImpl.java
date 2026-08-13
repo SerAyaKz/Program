@@ -130,35 +130,35 @@ public class JobServiceImpl implements JobService {
             // Handle error (e.g., log the error or rethrow it)
         }
     }
-    public void collectSkills(Integer jobId) {
-        String flaskUrl = "http://localhost:5000/get_hh_enbek_skills";
-        Job job = repository.findById(jobId).orElseThrow(EntityNotFoundException::new);
-        Skill skill = skillRepository.findAllByJob_Id(jobId);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        // Create a description JSON object
-        Map<String, String> requestBody = new HashMap<>();
-//        requestBody.put("job_name", job.getName());
-
-        // Convert to JSON string
-        ObjectMapper objectMapper = new ObjectMapper();
-        String jsonRequestBody;
-        try {
-            jsonRequestBody = objectMapper.writeValueAsString(requestBody);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return; // Handle JSON processing error
-        }
-
-        HttpEntity<String> requestEntity = new HttpEntity<>(jsonRequestBody, headers);
-
-        // Capture the response as String
-        ResponseEntity<String> response = restTemplate.exchange(flaskUrl, HttpMethod.POST, requestEntity, String.class);
-
-        System.out.println(response.getBody());
-        skill.setName(response.getBody());
-        repository.save(job);
-    }
+//    public void collectSkills(Integer jobId) {
+//        String flaskUrl = "http://localhost:5000/get_hh_enbek_skills";
+//        Job job = repository.findById(jobId).orElseThrow(EntityNotFoundException::new);
+//        Skill skill = skillRepository.findAllByJob_Id(jobId);
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_JSON);
+//
+//        // Create a description JSON object
+//        Map<String, String> requestBody = new HashMap<>();
+////        requestBody.put("job_name", job.getName());
+//
+//        // Convert to JSON string
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        String jsonRequestBody;
+//        try {
+//            jsonRequestBody = objectMapper.writeValueAsString(requestBody);
+//        } catch (JsonProcessingException e) {
+//            e.printStackTrace();
+//            return; // Handle JSON processing error
+//        }
+//
+//        HttpEntity<String> requestEntity = new HttpEntity<>(jsonRequestBody, headers);
+//
+//        // Capture the response as String
+//        ResponseEntity<String> response = restTemplate.exchange(flaskUrl, HttpMethod.POST, requestEntity, String.class);
+//
+//        System.out.println(response.getBody());
+//        skill.setName(response.getBody());
+//        repository.save(job);
+//    }
 
 }

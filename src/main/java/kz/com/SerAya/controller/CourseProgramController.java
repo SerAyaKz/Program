@@ -1,5 +1,6 @@
 package kz.com.SerAya.controller;
 
+import kz.com.SerAya.dto.CourseLearningOutcomeRequestDto;
 import kz.com.SerAya.dto.CourseProgramDto;
 import kz.com.SerAya.dto.StandardDto;
 import kz.com.SerAya.entity.CourseProgram;
@@ -54,6 +55,26 @@ public class CourseProgramController {
             @RequestBody CourseProgramDto courseProgramDto
     ) {
         courseProgramService.update(id, courseProgramDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/courseLearningOutcome/add")
+    public ResponseEntity<Void> addOutcomes(@RequestBody CourseLearningOutcomeRequestDto request) {
+        courseProgramService.addLearningOutcomes(
+                request.getCourseId(),
+                request.getProgramId(),
+                request.getLearningOutcomeCodes()
+        );
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/courseLearningOutcome/remove")
+    public ResponseEntity<Void> removeOutcomes(@RequestBody CourseLearningOutcomeRequestDto request) {
+        courseProgramService.removeLearningOutcomes(
+                request.getCourseId(),
+                request.getProgramId(),
+                request.getLearningOutcomeCodes()
+        );
         return ResponseEntity.ok().build();
     }
 }

@@ -19,4 +19,8 @@ public interface ProgramStandardRepository extends JpaRepository<Program, Intege
     @Modifying
     @Query(value = "DELETE FROM program_standard WHERE standard_id = :standardId", nativeQuery = true)
     void removeStandardFromProgram( Integer standardId);
+    @Transactional
+    @Modifying
+    @Query(value = "DELETE FROM program_standard WHERE program_id = :id", nativeQuery = true)
+    void deleteAllByProgram_Id(Integer id);
 }
