@@ -923,15 +923,15 @@ public class ProgramServiceImpl implements ProgramService {
                 .filter(Objects::nonNull)
                 .collect(Collectors.joining(", "));
 
-//        String outcomeTexts = outcomes.stream()
-//                .map(LearningOutcome::getLearningOutcomeEn)
-//                .filter(Objects::nonNull)
-//                .collect(Collectors.joining(", "));
+        String outcomeTexts = outcomes.stream()
+                .map(LearningOutcome::getLearningOutcomeEn)
+                .filter(Objects::nonNull)
+                .collect(Collectors.joining(", "));
 
         String input = "Educational program: " + program.getCodeName() + ". "
                 + "Courses: " + courseNames + ". "
-                + "Skills: " + skillNames + ". "
-//                + "Learning outcomes: " + outcomeTexts
+                + "Relevant Skills: " + skillNames + ". "
+                + "Learning outcomes: " + outcomeTexts
                 ;
 
         Map<String, Object> requestBody = new HashMap<>();
